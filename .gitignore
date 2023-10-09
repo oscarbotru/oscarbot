@@ -1,0 +1,17 @@
+.DS_Store
+*.pyc
+.idea/
+*.geany
+venv/
+static/profile/*.*
+*/__pycache__/
+venv
+env
+.env
+/media
+node_modules
+postgres_data
+.env.docker
+pgdata/
+.vscode
+.pytest_cache
