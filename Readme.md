@@ -25,6 +25,8 @@ TELEGRAM_PARSE_MODE = 'HTML'
 # or
 TELEGRAM_PARSE_MODE = 'MARKDOWN'
 ```
+Run django server and open [localhost:8000/admin/](http://localhost:8000/admin/) and create new bot, 
+at least fill bot token for testing ability
 ## Features
 * User model
 ```python
@@ -65,6 +67,11 @@ tg_response = TGResponse(
 tg_response.send(token, user=user)  # user from user model point
 # or 
 tg_response.send(token, t_id=1111111)  # user's telegram id
+```
+
+* Long polling server for testing
+```shell
+python manage.py runbot
 ```
 
 * Update messages available
