@@ -1,3 +1,5 @@
+from oscarbot.menu import Menu, Button
+from oscarbot.response import TGResponse
 
 
 def some_messages():
@@ -5,4 +7,10 @@ def some_messages():
 
 
 def some_message(pk):
-    pass
+    menu = Menu([
+        Button('text', callback='/courses/')
+    ])
+    return TGResponse(
+        message='Test',
+        menu=menu
+    )

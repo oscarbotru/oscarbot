@@ -131,3 +131,6 @@ OSCARBOT_BOT_MODEL = 'oscarbot.Bot'
 OSCARBOT_APPS = [
     'main',
 ]
+
+TELEGRAM_URL = os.getenv('TELEGRAM_URL')
+TELEGRAM_PARSE_MODE = 'HTML'
