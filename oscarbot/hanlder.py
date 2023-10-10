@@ -2,7 +2,6 @@ from oscarbot.bot import Bot
 from oscarbot.models import User
 from oscarbot.response import TGResponse
 from oscarbot.router import Router
-from oscarbot.services import get_bot_model
 from oscarbot.structures import Message
 
 
@@ -15,12 +14,13 @@ class BaseHandler:
         self.bot = Bot(bot.token)
         self.content = content
         self.message = Message(content)
+        print(content)
+        print(self.message.__dict__)
         self.user = self.__find_or_create_user_in_db()
 
     def __find_or_create_user_in_db(self):
         if self.message.user:
-            bot_model = get_bot_model()
-            user_in_db, _ = bot_model.objects.update_or_create(
+            user_in_db, _ = User.objects.update_or_create(
                 t_id=self.message.user.id,
                 defaults={
                     "username": self.message.user.username,
@@ -30,7 +30,8 @@ class BaseHandler:
             return user_in_db
         return None
 
-    def __send_do_not_understand(self):
+    @staticmethod
+    def __send_do_not_understand():
         return TGResponse(
             message="Извините, я не понимаю Вас :("
         )

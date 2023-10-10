@@ -8,9 +8,15 @@ def some_messages():
 
 def some_message(pk):
     menu = Menu([
-        Button('text', callback='/courses/')
+        Button("text", callback="/courses/")
     ])
     return TGResponse(
-        message='Test',
+        message="Test",
         menu=menu
+    )
+
+
+def start():
+    return TGResponse(
+        message="Hi!"
     )
