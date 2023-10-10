@@ -10,10 +10,12 @@ class TGResponse:
         self.attache = attache
         self.need_update = need_update
 
-    def send(self, token, user):
+    def send(self, token, user=None, t_id=None):
         tg_bot = Bot(token)
+        if self.menu:
+            self.menu = self.menu.build()
         data_to_send = {
-            'chat_id': user.t_id,
+            'chat_id': user.t_id if user is not None else t_id,
             'message': self.message,
             'reply_keyboard': self.menu
         }

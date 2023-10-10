@@ -1,8 +1,10 @@
-from main.views import some_message, some_messages, start
+from main.views import start, category_products, categories
 from oscarbot.router import route
 
 routes = [
-    route('/courses/', some_messages),
-    route('/course/<pk>/', some_message),
-    route('/start', start)
+    route('/start', start),
+
+    route('/categories/', categories),
+    route('/category/<pk>/', category_products),
+
 ]

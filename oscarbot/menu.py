@@ -31,7 +31,7 @@ class Menu:
         line_menu_items = []
         for menu_button in self.button_list:
             i += 1
-            line_menu_items.append(menu_button)
+            line_menu_items.append(menu_button.build())
             if i == self.buttons_in_line:
                 menu_items.append(line_menu_items)
                 i = 0
