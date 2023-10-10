@@ -1,6 +1,8 @@
-from bot.bot import Bot
-from bot.hanlder import BaseHandler
 
 
-def some_message(bot: BaseHandler):
+def some_messages():
+    pass
+
+
+def some_message(pk):
     pass

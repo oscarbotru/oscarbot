@@ -1,6 +1,7 @@
-from main.views import some_message
+from main.views import some_message, some_messages
 from oscarbot.router import route
 
 routes = [
-    route('/courses/', some_message)
+    route('/courses/', some_messages),
+    route('/course/<pk>/', some_message),
 ]
