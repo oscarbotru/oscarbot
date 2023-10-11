@@ -53,20 +53,14 @@ menu = Menu(button_list)
 
 * Message builder
 ```python
-from oscarbot.response import TGResponse
-from oscarbot.bot import Bot
+from oscarbot.shortcut import QuickBot
 
-token = 'telegram bot token from @BotFather'
-bot = Bot(token)
-
-tg_response = TGResponse(
-    message='Some text',
-    menu=menu  # from menu builder
+quick_bot = QuickBot(
+    chat=111111111,
+    message='Hello from command line',
+    token='token can be saved in DB and not required'
 )
-
-tg_response.send(token, user=user)  # user from user model point
-# or 
-tg_response.send(token, t_id=1111111)  # user's telegram id
+quick_bot.send()
 ```
 
 * Long polling server for testing

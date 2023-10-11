@@ -1,0 +1,49 @@
+[project]
+name = "django-oscarbot"
+version = "0.2"
+description = "Django app for create Telegram bot"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {file = "LICENSE"}
+
+keywords = ["django", "telegram"]
+authors = [
+  {name = "Oleg Maslov", email = "info@oscar-studio.com" }
+]
+
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Web Environment",
+  "Framework :: Django",
+  "Intended Audience :: Developers",
+  "Topic :: Software Development :: Build Tools",
+
+  "License :: OSI Approved :: MIT License",
+
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3 :: Only",
+]
+
+dependencies = [
+  "django",
+  "requests"
+]
+
+[project.optional-dependencies]
+dev = ["check-manifest"]
+test = ["coverage"]
+
+[project.urls]
+"Homepage" = "https://github.com/oscarbotru/oscarbot"
+"Bug Reports" = "https://github.com/oscarbotru/oscarbot/issues"
+[tool.setuptools]
+package-data = {"sample" = ["*.dat"]}
+
+[build-system]
+requires = ["setuptools>=43.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
