@@ -16,3 +16,4 @@ pgdata/
 .vscode
 .pytest_cache
 dist/
+*.egg*

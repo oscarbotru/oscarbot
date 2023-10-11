@@ -29,10 +29,8 @@ class TGResponse:
             response_content = tg_bot.send_message(
                 **data_to_send
             )
-        print('*' * 50)
-        print(response_content)
-        print('*' * 50)
-        user.update_last_sent_message(response_content)
+        if user:
+            user.update_last_sent_message(response_content)
 
     def can_send(self):
         if self.message is not None:
