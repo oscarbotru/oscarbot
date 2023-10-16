@@ -3,10 +3,11 @@ import json
 
 class Button:
 
-    def __init__(self, text, callback=None, url=None):
+    def __init__(self, text, callback=None, url=None, web_app=None):
         self.text = text
         self.callback = callback
         self.url = url
+        self.web_app = web_app
 
     def build(self):
         menu_button = {
@@ -16,6 +17,8 @@ class Button:
             menu_button['callback_data'] = self.callback
         elif self.url is not None:
             menu_button['url'] = self.url
+        elif self.web_app is not None:
+            menu_button['web_app'] = {'url': self.web_app}
         return menu_button
 
 

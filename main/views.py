@@ -42,7 +42,8 @@ def categories():
 
 def start():
     menu = Menu([
-        Button("Categories", callback="/categories/")
+        Button("Categories", callback="/categories/"),
+        Button("Site", web_app="https://oscarbot.site")
     ])
     return TGResponse(
         message="Hi!",
