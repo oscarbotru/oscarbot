@@ -45,6 +45,7 @@ from oscarbot.menu import Menu, Button
 button_list = [
     Button(text='Text for callback', callback='/some_callback/'),
     Button(text='Text for external url', url='https://oscarbot.site/'),
+    Button(text='Web app view', web_app='https://oscarbot.site/'),
 ]
 
 menu = Menu(button_list)
