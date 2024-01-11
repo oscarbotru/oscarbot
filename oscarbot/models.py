@@ -42,3 +42,7 @@ class User(models.Model):
         if response_dict.get('ok'):
             self.last_message_id = response_dict.get('result').get('message_id')
             self.save()
+
+
+class Constructor(models.Model):
+    pass

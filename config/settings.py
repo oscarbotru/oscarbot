@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'main',
     'oscarbot',
 ]
 
@@ -129,7 +128,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Oscarbot
 OSCARBOT_BOT_MODEL = 'oscarbot.Bot'
 OSCARBOT_APPS = [
-    'main',
+    'example'
 ]
 
 TELEGRAM_URL = os.getenv('TELEGRAM_URL')

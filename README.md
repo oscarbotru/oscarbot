@@ -18,8 +18,7 @@ In settings.py file you need to specify application for tg use:
 ```python
 OSCARBOT_APPS = ['main']
 
-# set Telegram api url:
-TELEGRAM_URL = ''
+# set Telegram api url in your env variables TELEGRAM_URL
 # set Telegram message parse mode:
 TELEGRAM_PARSE_MODE = 'HTML'
 # or
@@ -63,6 +62,10 @@ quick_bot = QuickBot(
 )
 quick_bot.send()
 ```
+
+* Application with routing and views(handlers):
+
+    [example application](https://github.com/oscarbotru/oscarbot/tree/master/example/)
 
 * Long polling server for testing
 ```shell

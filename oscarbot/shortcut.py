@@ -1,4 +1,3 @@
-from oscarbot.bot import Bot
 from oscarbot.menu import Menu
 from oscarbot.models import User
 from oscarbot.response import TGResponse

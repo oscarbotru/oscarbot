@@ -49,7 +49,7 @@ class Router:
     def __call__(self):
         func, arguments = self.__recognise()
         if func == arguments is None:
-            raise ModuleNotFoundError(f'Failed to load router')
+            raise ModuleNotFoundError('Failed to load router')
 
         return func, arguments
 
@@ -57,13 +57,14 @@ class Router:
     def __collect_all_routes() -> list:
         import importlib
         all_routes = []
-        for app in settings.OSCARBOT_APPS:
-            try:
-                module_name = f'{app}.router'
-                route_item = importlib.import_module(module_name)
-                all_routes.extend(route_item.routes)
-            except ImportError as ex:
-                print(ex)
+        if len(settings.OSCARBOT_APPS) > 0:
+            for app in settings.OSCARBOT_APPS:
+                try:
+                    module_name = f'{app}.router'
+                    route_item = importlib.import_module(module_name)
+                    all_routes.extend(route_item.routes)
+                except ImportError as ex:
+                    print(ex)
         return all_routes
 
     def __recognise(self):

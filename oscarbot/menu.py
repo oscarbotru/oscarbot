@@ -40,4 +40,5 @@ class Menu:
                 i = 0
                 line_menu_items = []
         menu_items.append(line_menu_items)
+        # return json.dumps({'inline_keyboard': menu_items})
         return json.dumps({'inline_keyboard': menu_items})
