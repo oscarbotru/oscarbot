@@ -57,7 +57,7 @@ class BaseHandler:
         router = Router(path)
         func, arguments = router()
 
-        response = func(**arguments)
+        response = func(user=self.user, **arguments)
         if response:
             return response
         else:

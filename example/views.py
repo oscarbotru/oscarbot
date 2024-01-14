@@ -2,7 +2,7 @@ from oscarbot.menu import Menu, Button
 from oscarbot.response import TGResponse
 
 
-def start():
+def start(user):
     menu = Menu([
         Button("Начнем", callback="/diagnostic/"),
     ])
@@ -12,7 +12,7 @@ def start():
     )
 
 
-def first_question():
+def first_question(user):
     menu = Menu([
         Button("Да", callback="/diagnostic/"),
     ])

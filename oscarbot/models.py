@@ -36,6 +36,7 @@ class User(models.Model):
     name = models.CharField(max_length=200, default='', verbose_name='Имя')
     last_message_id = models.BigIntegerField(**NULLABLE, verbose_name='Номер последнего сообщения')
     want_action = models.CharField(max_length=250, **NULLABLE)
+    state_information = models.TextField(**NULLABLE)
 
     def update_last_sent_message(self, response_content):
         response_dict = json.loads(response_content)
