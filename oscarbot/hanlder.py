@@ -2,6 +2,7 @@ import importlib
 
 from django.conf import settings
 
+from oscarbot.action import Action
 from oscarbot.bot import Bot
 from oscarbot.models import User
 from oscarbot.response import TGResponse
@@ -67,13 +68,14 @@ class BaseHandler:
             return self.__handle_callback_data(self.message.text)
 
         if self.user.want_action:
-            self.user.next_action()  # TODO:
+            action = Action(self.user, self.message.text)
+            return action()
 
         if settings.TELEGRAM_TEXT_PROCESSOR:
             mod_name, func_name = settings.TELEGRAM_TEXT_PROCESSOR.rsplit('.', 1)
             mod = importlib.import_module(mod_name)
             text_processor = getattr(mod, func_name)
-            response = text_processor(self.message.text)
+            response = text_processor(self.user, self.message.text)
             if response:
                 return response
 
