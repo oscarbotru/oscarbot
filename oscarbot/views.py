@@ -13,7 +13,7 @@ def bot_view(request, token):
         body = request.body.decode('utf-8')
         body = body.replace('\n', '')
         content = json.loads(body)
-        handle_content(token, content)
+        return handle_content(token, content)
 
 
 def handle_content(token, content):

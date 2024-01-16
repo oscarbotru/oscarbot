@@ -8,7 +8,6 @@ class Action:
 
     def __init__(self, user, message):
         self.actions = self.__collect_all_actions()
-        print(self.actions)
         self.user = user
         self.message = message
 

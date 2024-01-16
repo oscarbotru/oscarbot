@@ -19,12 +19,10 @@ class BaseHandler:
         self.bot = Bot(bot.token)
         self.content = content
         self.message = Message(content)
-        print(content)
-        print(self.message.__dict__)
         self.user = self.__find_or_create_user_in_db()
 
     def __find_or_create_user_in_db(self):
-        if self.message.user:
+        if hasattr(self.message, 'user'):
             user_in_db, _ = User.objects.update_or_create(
                 t_id=self.message.user.id,
                 defaults={
