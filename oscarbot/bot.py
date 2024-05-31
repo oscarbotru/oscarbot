@@ -14,8 +14,8 @@ class Bot:
     def __init__(self, token):
         self.token = token
 
-    def send_message(self, chat_id, message, photo=None, is_silent=False, is_background=False, reply_to_msg_id=None,
-                     parse_mode='HTML', reply_keyboard=None):
+    def send_message(self, chat_id, message, photo=None, video=None, is_silent=False, is_background=False, reply_to_msg_id=None,
+                     parse_mode='HTML', reply_keyboard=None, protect_content=False):
         """
         @param chat_id:
         @param message:
@@ -31,7 +31,7 @@ class Bot:
             'chat_id': chat_id,
             'text': re.sub('<[^>]*>', '', message),  # TODO: todo something
             'parse_mode': parse_mode,
-            'protect_content': True
+            'protect_content': protect_content
         }
         if reply_keyboard is not None:
             params['reply_markup'] = reply_keyboard
@@ -45,9 +45,19 @@ class Bot:
 
         params['disable_web_page_preview'] = True
         if photo:
-            params['photo'] = f'{settings.BASE_URL}{settings.MEDIA_URL}{photo}'
+            if 'https://' in photo:
+                params['photo'] = photo
+            else:
+                params['photo'] = f'{settings.BASE_URL}{settings.MEDIA_URL}{photo}'
             params['caption'] = params['text']
             result = requests.post(self.api_url + self.token + "/sendPhoto", data=params)
+        elif video:
+            if video.startswith('https://'):
+                params['video_note'] = video
+            else:
+                params['video_note'] = f'{settings.BASE_URL}{settings.MEDIA_URL}{video}'
+            params['caption'] = params['text']
+            result = requests.post(self.api_url + self.token + "/sendVideoNote", data=params)
         else:
             result = requests.post(self.api_url + self.token + "/sendMessage", data=params)
         content = result.content.decode('utf-8')
@@ -61,6 +71,17 @@ class Bot:
         """
         params = {'chat_id': chat_id, 'photo': photo_url, 'parse_mode': 'Markdown'}
         result = requests.post(self.api_url + self.token + "/sendPhoto", data=params)
+        content = result.content.decode('utf-8')
+        return content
+
+    def send_video(self, chat_id, video_url):
+        params = {
+            'chat_id': chat_id,
+            'video_note': video_url,
+            'parse_mode': 'Markdown',
+            'length': 100
+        }
+        result = requests.post(self.api_url + self.token + "/sendVideoNote", data=params)
         content = result.content.decode('utf-8')
         return content
 
@@ -78,17 +99,29 @@ class Bot:
         content = result.content.decode('utf-8')
         return content
 
-    def update_message(self, chat_id, message_id, message, photo=None, reply_keyboard=None):
+    def update_message(self, chat_id, message, message_id, is_silent=False, is_background=False, reply_to_msg_id=None,
+                       parse_mode='HTML', reply_keyboard=None, **kwargs):
         params = {
             'chat_id': chat_id,
             'message_id': message_id,
             'text': re.sub('<[^>]*>', '', message),  # TODO: todo something
-            'parse_mode': 'HTML'
+            'parse_mode': parse_mode,
+            'protect_content': True
         }
         if reply_keyboard is not None:
             params['reply_markup'] = reply_keyboard
+        if is_silent:
+            params['silent'] = True
+            params['disable_notification'] = True
+        if is_background:
+            params['background'] = True
+        if reply_to_msg_id:
+            params['reply_to_msg_id'] = reply_to_msg_id
+
+        params['disable_web_page_preview'] = True
         result = requests.post(self.api_url + self.token + "/editMessageText", data=params)
-        return result.content.decode('utf-8')
+        content = result.content.decode('utf-8')
+        return content
 
     def delete_message(self, chat_id, message_id):
         params = {'chat_id': chat_id, 'message_id': message_id}

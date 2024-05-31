@@ -1,5 +1,6 @@
 import importlib
 
+import requests
 from django.conf import settings
 
 from oscarbot.action import Action
@@ -40,26 +41,39 @@ class BaseHandler:
         )
 
     def handle(self) -> TGResponse:
-        if self.message.data:
+        if hasattr(self.message, 'data') and self.message.data:
             return self.__handle_callback_data(self.message.data)
-        elif self.message.text:
+        elif hasattr(self.message, 'text') and self.message.text:
             return self.__handle_text_data()
-        elif self.message.photo:
+        elif hasattr(self.message, 'photo') and self.message.photo:
             return self.__handle_photo_data()
-        elif self.message.document:
+        elif hasattr(self.message, 'document') and self.message.document:
             return self.__handle_document_data()
         else:
             return self.__send_do_not_understand()
 
+    def __get_text_handler(self, photo=None):
+        mod_name, func_name = settings.TELEGRAM_TEXT_PROCESSOR.rsplit('.', 1)
+        mod = importlib.import_module(mod_name)
+        text_processor = getattr(mod, func_name)
+        data = {
+            'text': self.message.text,
+            'photo': photo,
+        }
+        response = text_processor(self.user, data)
+        if response:
+            return response
+
+        return False
+
     def __handle_callback_data(self, path):
         router = Router(path)
         func, arguments = router()
-
-        response = func(user=self.user, **arguments)
-        if response:
-            return response
-        else:
-            return self.__send_do_not_understand()
+        if func:
+            response = func(user=self.user, **arguments)
+            if response:
+                return response
+        return self.__send_do_not_understand()
 
     def __handle_text_data(self):
         if self.message.text[0] == '/':
@@ -70,10 +84,7 @@ class BaseHandler:
             return action()
 
         if settings.TELEGRAM_TEXT_PROCESSOR:
-            mod_name, func_name = settings.TELEGRAM_TEXT_PROCESSOR.rsplit('.', 1)
-            mod = importlib.import_module(mod_name)
-            text_processor = getattr(mod, func_name)
-            response = text_processor(self.user, self.message.text)
+            response = self.__get_text_handler()
             if response:
                 return response
 
@@ -81,9 +92,21 @@ class BaseHandler:
 
     def __handle_photo_data(self):
         """ WIP: """
-        return TGResponse(
-            message=''
-        )
+        photos = []
+        for file in self.message.photo:
+            file_id = file['file_id']
+            res = requests.get(f'{settings.TELEGRAM_URL}{self.bot.token}/getFile?file_id={file_id}')
+            file_path = res.json()['result']['file_path']
+            photos.append(
+                f'https://api.telegram.org/file/bot{self.bot.token}/{file_path}'
+            )
+
+        if settings.TELEGRAM_TEXT_PROCESSOR:
+            response = self.__get_text_handler(photo=photos)
+            if response:
+                return response
+
+        return self.__send_do_not_understand()
 
     def __handle_document_data(self):
         """ WIP: """

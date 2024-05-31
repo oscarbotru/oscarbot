@@ -32,8 +32,8 @@ class Message(models.Model):
 
 class User(models.Model):
     t_id = models.CharField(max_length=100, default='', verbose_name='Telegram ID')
-    username = models.CharField(max_length=200, default='', verbose_name='Username')
-    name = models.CharField(max_length=200, default='', verbose_name='Имя')
+    username = models.CharField(max_length=200, default='', verbose_name='Username', null=True, blank=True)
+    name = models.CharField(max_length=200, default='', verbose_name='Имя', null=True, blank=True)
     last_message_id = models.BigIntegerField(**NULLABLE, verbose_name='Номер последнего сообщения')
     want_action = models.CharField(max_length=250, **NULLABLE)
     state_information = models.TextField(**NULLABLE)

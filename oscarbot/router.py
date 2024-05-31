@@ -16,20 +16,40 @@ class Route:
         return self.pattern
 
     def check(self, path):
-        path_list = path.split('/')
-        pattern_list = self.pattern.split('/')
-        self.params = dict()
+        if path:
+            if any([i.isspace() for i in path]):
+                path = self.refactoring_path(path)
+            path_list = path.split('/')
+            pattern_list = self.pattern.split('/')
+            self.params = dict()
 
-        if len(pattern_list) == len(pattern_list):
-            for i in range(len(path_list)):
-                if len(pattern_list[i]) > 1:
-                    if pattern_list[i][0] != '<':
-                        if path_list[i] != pattern_list[i]:
-                            return False
-                    else:
-                        self.params[pattern_list[i]] = path_list[i]
-            return True
+            if len(pattern_list) == len(path_list):
+                for i in range(len(path_list)):
+                    if len(pattern_list[i]) > 1:
+                        if pattern_list[i][0] != '<':
+                            if path_list[i] != pattern_list[i]:
+                                return False
+                        else:
+                            self.params[pattern_list[i]] = path_list[i]
+                return True
         return False
+
+    def refactoring_path(self, path: str) -> str:
+        """Refactoring path"""
+        path_result = ''
+        space = False
+        for p in path:
+            if p.isspace():
+                if not space:
+                    p = '/<'
+                    space = True
+                else:
+                    p = '>/'
+                    space = False
+            path_result += p
+        if space:
+            path_result += '>/'
+        return path_result
 
     def get_params(self):
         params = dict()
@@ -49,7 +69,8 @@ class Router:
     def __call__(self):
         func, arguments = self.__recognise()
         if func == arguments is None:
-            raise ModuleNotFoundError('Failed to load router')
+            print('Failed to load router')
+            return False, False
 
         return func, arguments
 
