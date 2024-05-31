@@ -44,6 +44,11 @@ class User(models.Model):
             self.last_message_id = response_dict.get('result').get('message_id')
             self.save()
 
+    def clean_state(self):
+        """ Clean state of user, can be used in actions """
+        self.want_action = None
+        self.state_information = None
+        self.save()
 
 class Constructor(models.Model):
     pass
