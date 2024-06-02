@@ -71,7 +71,7 @@ class BaseHandler:
         router = Router(path)
         func, arguments = router()
         if func:
-            response = func(user=self.user, **arguments)
+            response = func(self.user, **arguments)
             if response:
                 return response
         return self.__send_do_not_understand()
