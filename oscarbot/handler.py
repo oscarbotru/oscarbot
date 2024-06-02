@@ -35,8 +35,9 @@ class BaseHandler:
         return None
 
     def __send_do_not_understand(self):
-        self.user.last_message_id = None
-        self.user.save()
+        if self.user:
+            self.user.last_message_id = None
+            self.user.save()
         return TGResponse(
             message="Извините, я не понимаю Вас :("
         )
