@@ -3,7 +3,7 @@ from oscarbot.bot import Bot
 
 class TGResponse:
 
-    def __init__(self, message: str, menu=None, need_update=False, photo=None, attache=None, video=None) -> None:
+    def __init__(self, message: str, menu=None, need_update=True, photo=None, attache=None, video=None) -> None:
         # self.chat = chat
         self.message = message
         self.menu = menu
@@ -24,7 +24,7 @@ class TGResponse:
             'video': self.video
         }
 
-        if self.need_update:
+        if self.need_update and user.last_message_id:
             response_content = tg_bot.update_message(
                 **data_to_send,
                 message_id=user.last_message_id,
