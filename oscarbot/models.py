@@ -50,5 +50,6 @@ class User(models.Model):
         self.state_information = None
         self.save()
 
+
 class Constructor(models.Model):
     pass

@@ -24,9 +24,16 @@ class Command(BaseCommand):
                 body = total_message.decode('utf-8')
                 body = body.replace('\n', '')
                 content = json.loads(body)
-                if len(content['result']) > 0:
-                    offset = int(content['result'][0]['update_id']) + 1
-                    if offset > 0:
-                        handle_content(bot.token, content['result'][0])
+                if content.get('ok'):
+                    if len(content['result']) > 0:
+                        offset = int(content['result'][0]['update_id']) + 1
+                        if offset > 0:
+                            handle_content(bot.token, content['result'][0])
+                else:
+                    raise ValueError
+        except ValueError:
+            print('Token from Telegram not found')
+        except AttributeError:
+            print(f'Add the bot token to the database in {bot_model}')
         except KeyboardInterrupt:
             print('Exit bot server')

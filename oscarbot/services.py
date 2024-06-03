@@ -8,4 +8,4 @@ def get_bot_model():
         bot_model = apps.get_model(app_name, app_model)
         return bot_model
     except Exception:
-        raise RuntimeError('Failed to get Bot model')
+        raise RuntimeError('Failed to get Bot model. Add to settings.py OSCARBOT_BOT_MODEL = app.BotModel')
