@@ -4,8 +4,7 @@ from django.conf import settings
 
 def get_bot_model():
     try:
-        *app_name_lst, app_model = settings.OSCARBOT_BOT_MODEL.split('.')
-        app_name = '.'.join(app_name_lst)
+        app_name, app_model = settings.OSCARBOT_BOT_MODEL.split('.')
         bot_model = apps.get_model(app_name, app_model)
         return bot_model
     except Exception:
