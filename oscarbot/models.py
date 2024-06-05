@@ -30,7 +30,7 @@ class Message(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
 
-class User(models.Model):
+class BaseUser(models.Model):
     t_id = models.CharField(max_length=100, default='', verbose_name='Telegram ID')
     username = models.CharField(max_length=200, default='', verbose_name='Username', null=True, blank=True)
     name = models.CharField(max_length=200, default='', verbose_name='Имя', null=True, blank=True)
@@ -49,6 +49,13 @@ class User(models.Model):
         self.want_action = None
         self.state_information = None
         self.save()
+
+    class Meta:
+        abstract = True
+
+
+class User(BaseUser):
+    pass
 
 
 class Constructor(models.Model):

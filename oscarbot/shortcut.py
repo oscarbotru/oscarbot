@@ -1,7 +1,6 @@
 from oscarbot.menu import Menu
-from oscarbot.models import User
 from oscarbot.response import TGResponse
-from oscarbot.services import get_bot_model
+from oscarbot.services import get_bot_model, get_bot_user_model
 
 
 class QuickBot:
@@ -22,13 +21,15 @@ class QuickBot:
             if bot_object:
                 self.token = bot_object.token
 
+        user_model = get_bot_user_model()
         if isinstance(chat, int):
             self.chat = chat
         elif isinstance(chat, str):
-            chat_user = User.objects.filter(username=chat).first()
+            chat_user = user_model.objects.filter(username=chat).first()
             if chat_user:
                 self.chat = chat_user.t_id
-        elif isinstance(chat, User):
+        elif isinstance(chat, user_model):
+            chat: user_model
             self.chat = chat.t_id
 
         self.message = message
