@@ -77,6 +77,7 @@ class BaseHandler:
         if func:
             response = func(self.user, **arguments)
             if response:
+                self.user.update_path(path)
                 return response
         return self.__send_do_not_understand()
 
