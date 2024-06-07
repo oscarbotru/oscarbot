@@ -31,9 +31,9 @@ class Command(BaseCommand):
                             handle_content(bot.token, content['result'][0])
                 else:
                     raise ValueError
-        except ValueError:
-            print('Token from Telegram not found')
-        except AttributeError:
-            print(f'Add the bot token to the database in {bot_model}')
+        except ValueError as e:
+            print(f'Token from Telegram not found\n{e}')
+        except AttributeError as e:
+            print(f'Add the bot token to the database in {bot_model}\n{e}')
         except KeyboardInterrupt:
             print('Exit bot server')

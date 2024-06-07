@@ -33,7 +33,7 @@ class TGResponse:
             response_content = tg_bot.send_message(
                 **data_to_send
             )
-        print(response_content)
+        print(f'{response_content}\n {"=" * 50}')
         if user:
             user.update_last_sent_message(response_content)
 

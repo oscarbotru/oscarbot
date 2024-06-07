@@ -36,6 +36,8 @@ class BaseUser(models.Model):
     name = models.CharField(max_length=200, default='', verbose_name='Имя', null=True, blank=True)
     last_message_id = models.BigIntegerField(**NULLABLE, verbose_name='Номер последнего сообщения')
     want_action = models.CharField(max_length=250, **NULLABLE)
+    last_path = models.CharField(max_length=250, **NULLABLE, default='/start')
+    path = models.CharField(max_length=250, **NULLABLE)
     state_information = models.TextField(**NULLABLE)
 
     def update_last_sent_message(self, response_content):
@@ -43,6 +45,12 @@ class BaseUser(models.Model):
         if response_dict.get('ok'):
             self.last_message_id = response_dict.get('result').get('message_id')
             self.save()
+
+    def update_path(self, path):
+        """Update path."""
+        self.last_path = self.path if self.path else '/start'
+        self.path = path
+        self.save()
 
     def clean_state(self):
         """ Clean state of user, can be used in actions """
