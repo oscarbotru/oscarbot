@@ -15,9 +15,8 @@ class BaseHandler:
 
     # logger: Logger
 
-    def __init__(self, bot, content):
-        self.bot_model = bot
-        self.bot = Bot(bot.token)
+    def __init__(self, token: str, content: str) -> None:
+        self.bot = Bot(token)
         self.content = content
         self.message = Message(content)
         self.user = self.__find_or_create_user_in_db()
