@@ -4,15 +4,24 @@ import requests
 from django.conf import settings
 from django.core.management import BaseCommand
 
+from oscarbot.bot_logger import log
 from oscarbot.services import get_bot_model
 from oscarbot.views import handle_content
 
 
 class Command(BaseCommand):
+    """Command"""
+
+    class BotData:
+        """Bot Data"""
+        token = None
 
     def handle(self, *args, **options):
         bot_model = get_bot_model()
         bot = bot_model.objects.all().first()
+        if not bot:
+            bot = self.BotData()
+            bot.token = settings.TELEGRAM_BOT_TOKEN if getattr(settings, 'TELEGRAM_BOT_TOKEN', None) else None
         offset = 0
         try:
             while True:
@@ -32,8 +41,9 @@ class Command(BaseCommand):
                 else:
                     raise ValueError
         except ValueError as e:
-            print(f'Token from Telegram not found\n{e}')
+            log.error(f'Token from Telegram not found\n{e}')
         except AttributeError as e:
-            print(f'Add the bot token to the database in {bot_model}\n{e}')
+            log.error(f'Add the bot token to the database in {bot_model}\n'
+                      f'Or settings.py attribute TELEGRAM_BOT_TOKEN\n{e}')
         except KeyboardInterrupt:
-            print('Exit bot server')
+            log.info(f'Exit bot server')
