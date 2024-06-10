@@ -4,7 +4,7 @@ from oscarbot.bot_logger import log
 
 class TGResponse:
 
-    def __init__(self, message: str, menu=None, need_update=True, photo=None, attache=None, video=None) -> None:
+    def __init__(self, message: str, menu=None, need_update=True, photo=None, attache=None, video=None, protect=False) -> None:
         # self.chat = chat
         self.message = message
         self.menu = menu
@@ -12,6 +12,7 @@ class TGResponse:
         self.need_update = need_update
         self.photo = photo
         self.video = video
+        self.protect = protect
 
     def send(self, token, user=None, t_id=None):
         tg_bot = Bot(token)
@@ -22,7 +23,8 @@ class TGResponse:
             'message': self.message,
             'reply_keyboard': self.menu,
             'photo': self.photo,
-            'video': self.video
+            'video': self.video,
+            'protect_content': self.protect
         }
 
         if self.need_update and user.last_message_id:
