@@ -1,6 +1,6 @@
 [project]
 name = "django-oscarbot"
-version = "0.37"
+version = "0.39"
 description = "Django app for create Telegram bot"
 readme = "README.md"
 requires-python = ">=3.8"
