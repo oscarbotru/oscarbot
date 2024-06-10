@@ -1,4 +1,5 @@
 from oscarbot.bot import Bot
+from oscarbot.bot_logger import log
 
 
 class TGResponse:
@@ -33,7 +34,7 @@ class TGResponse:
             response_content = tg_bot.send_message(
                 **data_to_send
             )
-        print(f'{response_content}\n {"=" * 50}')
+        log.info(f'{response_content}')
         if user:
             user.update_last_sent_message(response_content)
 

@@ -1,6 +1,8 @@
 import json
 import re
 
+from oscarbot.bot_logger import log
+
 
 class Button:
 
@@ -54,7 +56,7 @@ class Menu:
                     line_menu_items = []
             menu_items.append(line_menu_items)
         if self.mode == 'inline':
-            print(f'{menu_items = }')
+            log.info(f'{menu_items}')
             return json.dumps({'inline_keyboard': menu_items})
         else:
             return json.dumps({
