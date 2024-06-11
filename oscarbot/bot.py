@@ -157,13 +157,16 @@ class Bot:
                     return media_file
         return None
 
-    def answer_callback_query(self, callback_query_id, text, show_alert, cache_time):
+    def answer_callback_query(self, callback_query_id, text, url, show_alert, cache_time):
         """Answer callback query."""
         params = {
             'callback_query_id': callback_query_id,
-            'text': text,
             'show_alert': show_alert,
             'cache_time': cache_time,
         }
+        if text:
+            params['text'] = text
+        if url:
+            params['url'] = url
         result = requests.post(self.api_url + self.token + '/answerCallbackQuery', data=params)
         return result.content

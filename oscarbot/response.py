@@ -9,7 +9,7 @@ from oscarbot.bot_logger import log
 class TGResponse:
 
     def __init__(self, message: str, menu=None, need_update=True, photo=None, attache=None, video=None,
-                 protect=False, callback=False, callback_text='', show_alert=False, cache_time=None) -> None:
+                 protect=False, callback_text='', callback_url=False, show_alert=False, cache_time=None) -> None:
         self.tg_bot = None
         self.message = message
         self.menu = menu
@@ -19,14 +19,14 @@ class TGResponse:
         self.video = video
         self.protect = protect
         self.parse_mode = settings.TELEGRAM_PARSE_MODE if getattr(settings, 'TELEGRAM_PARSE_MODE', None) else 'HTML'
-        self.callback = callback
+        self.callback_url = callback_url
         self.callback_text = callback_text
         self.show_alert = show_alert
         self.cache_time = cache_time
 
     def send(self, token, user=None, content=None, t_id=None):
         self.tg_bot = Bot(token)
-        if self.callback and content and self.callback_text:
+        if content and (self.callback_text or self.callback_url):
             self.send_callback(content)
         if self.menu:
             self.menu = self.menu.build()
@@ -64,6 +64,7 @@ class TGResponse:
             params = {
                 'callback_query_id': callback_query_id,
                 'text': self.callback_text,
+                'url': self.callback_url,
                 'show_alert': self.show_alert,
                 'cache_time': self.cache_time,
             }
