@@ -48,9 +48,9 @@ class Bot:
         params['disable_web_page_preview'] = True
         if photo:
             if 'https://' in photo:
-                params['photo'] = photo
+                params['photo'] = f'{photo}'  # ?random=58&random=64
             else:
-                params['photo'] = f'{settings.BASE_URL}{settings.MEDIA_URL}{photo}'
+                params['photo'] = f'{settings.BASE_URL}{settings.MEDIA_URL}{photo}'  # ?random=58&random=64
             params['caption'] = params['text']
             result = requests.post(self.api_url + self.token + "/sendPhoto", data=params)
         elif video:
@@ -156,3 +156,14 @@ class Bot:
                         f.write(result.content)
                     return media_file
         return None
+
+    def answer_callback_query(self, callback_query_id, text, show_alert, cache_time):
+        """Answer callback query."""
+        params = {
+            'callback_query_id': callback_query_id,
+            'text': text,
+            'show_alert': show_alert,
+            'cache_time': cache_time,
+        }
+        result = requests.post(self.api_url + self.token + '/answerCallbackQuery', data=params)
+        return result.content
