@@ -1,3 +1,5 @@
+import json
+
 from django.conf import settings
 
 from oscarbot.bot import Bot
@@ -33,14 +35,12 @@ class TGResponse:
         }
 
         if self.need_update and user.last_message_id:
-            response_content = tg_bot.update_message(
-                **data_to_send,
-                message_id=user.last_message_id,
-            )
+            response_content = tg_bot.update_message(**data_to_send, message_id=user.last_message_id)
+            response_dict = json.loads(response_content)
+            if not response_dict.get('ok'):
+                response_content = tg_bot.send_message(**data_to_send)
         else:
-            response_content = tg_bot.send_message(
-                **data_to_send
-            )
+            response_content = tg_bot.send_message(**data_to_send)
         log.info(f'{response_content}')
         if user:
             user.update_last_sent_message(response_content)
