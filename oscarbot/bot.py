@@ -1,9 +1,8 @@
 import json
 import os
-import re
 
-from django.conf import settings
 import requests
+from django.conf import settings
 
 
 class Bot:
@@ -14,22 +13,25 @@ class Bot:
     def __init__(self, token):
         self.token = token
 
-    def send_message(self, chat_id, message, photo=None, video=None, is_silent=False, is_background=False, reply_to_msg_id=None,
-                     parse_mode='HTML', reply_keyboard=None, protect_content=False):
+    def send_message(self, chat_id, message, photo=None, video=None, is_silent=False, is_background=False,
+                     reply_to_msg_id=None, parse_mode='HTML', reply_keyboard=None, protect_content=False):
         """
         @param chat_id:
         @param message:
+        @param photo:
+        @param video:
         @param is_silent:
         @param is_background:
         @param reply_to_msg_id:
-        @param reply_keyboard:
         @param parse_mode:
+        @param reply_keyboard:
+        @param protect_content:
         @return: reply message json
         :param line_button:
         """
         params = {
             'chat_id': chat_id,
-            'text': re.sub('<[^>]*>', '', message),  # TODO: todo something
+            'text': message,
             'parse_mode': parse_mode,
             'protect_content': protect_content
         }
@@ -104,7 +106,7 @@ class Bot:
         params = {
             'chat_id': chat_id,
             'message_id': message_id,
-            'text': re.sub('<[^>]*>', '', message),  # TODO: todo something
+            'text': message,
             'parse_mode': parse_mode,
             'protect_content': True
         }

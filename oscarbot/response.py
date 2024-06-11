@@ -1,10 +1,13 @@
+from django.conf import settings
+
 from oscarbot.bot import Bot
 from oscarbot.bot_logger import log
 
 
 class TGResponse:
 
-    def __init__(self, message: str, menu=None, need_update=True, photo=None, attache=None, video=None, protect=False) -> None:
+    def __init__(self, message: str, menu=None, need_update=True, photo=None, attache=None, video=None,
+                 protect=False) -> None:
         # self.chat = chat
         self.message = message
         self.menu = menu
@@ -13,6 +16,7 @@ class TGResponse:
         self.photo = photo
         self.video = video
         self.protect = protect
+        self.parse_mode = settings.TELEGRAM_PARSE_MODE if getattr(settings, 'TELEGRAM_PARSE_MODE', None) else 'HTML'
 
     def send(self, token, user=None, t_id=None):
         tg_bot = Bot(token)
@@ -24,7 +28,8 @@ class TGResponse:
             'reply_keyboard': self.menu,
             'photo': self.photo,
             'video': self.video,
-            'protect_content': self.protect
+            'protect_content': self.protect,
+            'parse_mode': self.parse_mode,
         }
 
         if self.need_update and user.last_message_id:
