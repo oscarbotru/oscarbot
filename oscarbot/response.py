@@ -19,7 +19,6 @@ class TGResponse:
         self.video = video
         self.protect = protect
         self.parse_mode = settings.TELEGRAM_PARSE_MODE if getattr(settings, 'TELEGRAM_PARSE_MODE', None) else 'HTML'
-        self.content = None
         self.callback = callback
         self.callback_text = callback_text
         self.show_alert = show_alert
@@ -27,7 +26,6 @@ class TGResponse:
 
     def send(self, token, user=None, content=None, t_id=None):
         self.tg_bot = Bot(token)
-        self.content = content
         if self.callback and content and self.callback_text:
             self.send_callback(content)
         if self.menu:
