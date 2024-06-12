@@ -28,7 +28,7 @@ def handle_content(token, content):
         tg_response = handler.handle()
         if tg_response:
             if tg_response.can_send():
-                tg_response.send(token, handler.user)
+                tg_response.send(token, handler.user, content)
             return HttpResponse("OK")
     else:
         raise RuntimeError('Failed to find bot')
