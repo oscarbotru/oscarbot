@@ -9,7 +9,8 @@ from oscarbot.bot_logger import log
 class TGResponse:
 
     def __init__(self, message: str, menu=None, need_update=True, photo=None, attache=None, video=None,
-                 protect=False, callback_text='', callback_url=False, show_alert=False, cache_time=None) -> None:
+                 protect=False, callback_text='', callback_url=False, show_alert=False, cache_time=None,
+                 disable_web_page_preview=False) -> None:
         self.tg_bot = None
         self.message = message
         self.menu = menu
@@ -23,6 +24,7 @@ class TGResponse:
         self.callback_text = callback_text
         self.show_alert = show_alert
         self.cache_time = cache_time
+        self.disable_web_page_preview = disable_web_page_preview
 
     def send(self, token, user=None, content=None, t_id=None):
         self.tg_bot = Bot(token)
@@ -38,6 +40,7 @@ class TGResponse:
             'video': self.video,
             'protect_content': self.protect,
             'parse_mode': self.parse_mode,
+            'disable_web_page_preview': self.disable_web_page_preview
         }
 
         if self.need_update and user.last_message_id:

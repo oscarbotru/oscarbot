@@ -14,8 +14,10 @@ class Bot:
         self.token = token
 
     def send_message(self, chat_id, message, photo=None, video=None, is_silent=False, is_background=False,
-                     reply_to_msg_id=None, parse_mode='HTML', reply_keyboard=None, protect_content=False):
+                     reply_to_msg_id=None, parse_mode='HTML', reply_keyboard=None, protect_content=False,
+                     disable_web_page_preview=False):
         """
+        @param disable_web_page_preview:
         @param chat_id:
         @param message:
         @param photo:
@@ -45,7 +47,7 @@ class Bot:
         if reply_to_msg_id:
             params['reply_to_msg_id'] = reply_to_msg_id
 
-        params['disable_web_page_preview'] = True
+        params['disable_web_page_preview'] = disable_web_page_preview
         if photo:
             if 'https://' in photo:
                 params['photo'] = f'{photo}'  # ?random=58&random=64
