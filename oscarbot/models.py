@@ -15,6 +15,9 @@ class BaseBot(models.Model):
     class Meta:
         abstract = True
 
+    def __str__(self):
+        return self.t_id
+
 
 class Bot(BaseBot):
     pass
@@ -60,6 +63,9 @@ class BaseUser(models.Model):
 
     class Meta:
         abstract = True
+
+    def __str__(self):
+        return self.t_id
 
 
 class User(BaseUser):

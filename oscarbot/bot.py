@@ -13,10 +13,11 @@ class Bot:
     def __init__(self, token):
         self.token = token
 
-    def send_message(self, chat_id, message, photo=None, video=None, is_silent=False, is_background=False,
+    def send_message(self, chat_id, message, photo=None, video=None, file=None, is_silent=False, is_background=False,
                      reply_to_msg_id=None, parse_mode='HTML', reply_keyboard=None, protect_content=False,
                      disable_web_page_preview=False):
         """
+        @param file:
         @param disable_web_page_preview:
         @param chat_id:
         @param message:
@@ -57,11 +58,18 @@ class Bot:
             result = requests.post(self.api_url + self.token + "/sendPhoto", data=params)
         elif video:
             if video.startswith('https://'):
-                params['video_note'] = video
+                params['video'] = video
             else:
-                params['video_note'] = f'{settings.BASE_URL}{settings.MEDIA_URL}{video}'
+                params['video'] = f'{settings.BASE_URL}{settings.MEDIA_URL}{video}'
             params['caption'] = params['text']
-            result = requests.post(self.api_url + self.token + "/sendVideoNote", data=params)
+            result = requests.post(self.api_url + self.token + "/sendVideo", data=params)
+        elif file:
+            if file.startswith('https://'):
+                params['document'] = file
+            else:
+                params['document'] = f'{settings.BASE_URL}{settings.MEDIA_URL}{file}'
+            params['caption'] = params['text']
+            result = requests.post(self.api_url + self.token + "/sendDocument", data=params)
         else:
             result = requests.post(self.api_url + self.token + "/sendMessage", data=params)
         content = result.content.decode('utf-8')

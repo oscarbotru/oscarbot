@@ -24,11 +24,15 @@ def handle_content(token, content):
         current_bot = bot_model.objects.filter(token=token).first()
         bot_token = current_bot.token if current_bot else None
     if bot_token:
-        handler = BaseHandler(bot_token, content)
-        tg_response = handler.handle()
-        if tg_response:
-            if tg_response.can_send():
-                tg_response.send(token, handler.user, content)
+        try:
+            handler = BaseHandler(bot_token, content)
+            tg_response = handler.handle()
+            if tg_response:
+                if tg_response.can_send():
+                    tg_response.send(token, handler.user, content)
+                return HttpResponse("OK")
+        except Exception as ex:
+            print(ex)
             return HttpResponse("OK")
     else:
         raise RuntimeError('Failed to find bot')
