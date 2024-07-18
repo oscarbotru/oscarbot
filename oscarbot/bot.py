@@ -180,3 +180,8 @@ class Bot:
             params['url'] = url
         result = requests.post(self.api_url + self.token + '/answerCallbackQuery', data=params)
         return result.content
+
+    def get_me(self):
+        """Get me."""
+        result = requests.post(self.api_url + self.token + '/getMe')
+        return result.content

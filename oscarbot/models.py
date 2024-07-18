@@ -1,3 +1,4 @@
+import datetime
 import json
 
 from django.db import models
@@ -42,6 +43,7 @@ class BaseUser(models.Model):
     last_path = models.CharField(max_length=250, **NULLABLE, default='/start')
     path = models.CharField(max_length=250, **NULLABLE)
     state_information = models.TextField(**NULLABLE)
+    created = models.DateTimeField('Creation date', default=datetime.datetime.now)
 
     def update_last_sent_message(self, response_content):
         response_dict = json.loads(response_content)
@@ -65,7 +67,7 @@ class BaseUser(models.Model):
         abstract = True
 
     def __str__(self):
-        return self.t_id
+        return f'{self.t_id}'
 
 
 class User(BaseUser):
