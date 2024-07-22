@@ -40,9 +40,10 @@ class BaseHandler:
         if self.user:
             self.user.last_message_id = None
             self.user.save()
-        return TGResponse(
-            message="Извините, я не понимаю Вас :("
-        )
+        message = "Извините, я не понимаю Вас :("
+        if getattr(settings, 'NOT_UNDERSTAND_MESSAGE', None):
+            message = settings.NOT_UNDERSTAND_MESSAGE
+        return TGResponse(message=message)
 
     def handle(self) -> TGResponse:
         if hasattr(self.message, 'data') and self.message.data:
