@@ -184,4 +184,4 @@ class Bot:
     def get_me(self):
         """Get me."""
         result = requests.post(self.api_url + self.token + '/getMe')
-        return result.content
+        return result.json()
