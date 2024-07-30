@@ -9,7 +9,7 @@ from oscarbot.bot_logger import log
 class TGResponse:
 
     def __init__(self, message: str, menu=None, need_update=True, photo=None, attache=None, video=None,
-                 file=None, media_group: list = None, media_group_type='photo', has_spoiler=False, protect=False,
+                 file=None, media_group: list[dict] = None, media_group_type='photo', has_spoiler=False, protect=False,
                  callback_text='', callback_url=False, show_alert=False, cache_time=None,
                  disable_web_page_preview=False) -> None:
         self.tg_bot = None
