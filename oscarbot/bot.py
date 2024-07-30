@@ -13,9 +13,9 @@ class Bot:
     def __init__(self, token):
         self.token = token
 
-    def send_message(self, chat_id, message, photo=None, video=None, file=None, is_silent=False, is_background=False,
-                     reply_to_msg_id=None, parse_mode='HTML', reply_keyboard=None, protect_content=False,
-                     disable_web_page_preview=False):
+    def send_message(self, chat_id, message, photo=None, video=None, file=None, media_group=None, has_spoiler=False,
+                     media_group_type='photo', is_silent=False, is_background=False, reply_to_msg_id=None,
+                     parse_mode='HTML', reply_keyboard=None, protect_content=False, disable_web_page_preview=False):
         """
         @param file:
         @param disable_web_page_preview:
@@ -23,6 +23,9 @@ class Bot:
         @param message:
         @param photo:
         @param video:
+        @param media_group:
+        @param has_spoiler:
+        @param media_group_type:
         @param is_silent:
         @param is_background:
         @param reply_to_msg_id:
@@ -70,6 +73,19 @@ class Bot:
                 params['document'] = f'{settings.BASE_URL}{settings.MEDIA_URL}{file}'
             params['caption'] = params['text']
             result = requests.post(self.api_url + self.token + "/sendDocument", data=params)
+        elif media_group:
+            data = []
+            for file in media_group:
+                media_data = {
+                    'type': media_group_type,
+                    'caption': message,
+                    'parse_mode': parse_mode,
+                    'has_spoiler': has_spoiler,
+                    'media': file if file.startswith('https://') else f'{settings.BASE_URL}{settings.MEDIA_URL}{file}'
+                }
+                data.append(media_data)
+            params['media'] = json.dumps(data)
+            result = requests.post(self.api_url + self.token + "/sendMediaGroup", data=params)
         else:
             result = requests.post(self.api_url + self.token + "/sendMessage", data=params)
         content = result.content.decode('utf-8')
