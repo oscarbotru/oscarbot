@@ -48,7 +48,12 @@ class BaseUser(models.Model):
     def update_last_sent_message(self, response_content):
         response_dict = json.loads(response_content)
         if response_dict.get('ok'):
-            self.last_message_id = response_dict.get('result').get('message_id')
+            result = response_dict.get('result')
+            if isinstance(result, dict):
+                last_message_id = result.get('message_id')
+                self.last_message_id = last_message_id
+            else:
+                self.last_message_id = None
             self.save()
 
     def update_path(self, path):
