@@ -76,13 +76,17 @@ class Bot:
         elif media_group:
             data = []
             for file in media_group:
+                media = file['media']
+                if not media.startswith('https://'):
+                    media = f'{settings.BASE_URL}{settings.MEDIA_URL}{media}'
                 media_data = {
                     'type': media_group_type,
-                    'caption': message,
                     'parse_mode': parse_mode,
                     'has_spoiler': has_spoiler,
-                    'media': file if file.startswith('https://') else f'{settings.BASE_URL}{settings.MEDIA_URL}{file}'
+                    'media': media,
                 }
+                if 'caption' in file:
+                    media_data['caption'] = file['caption']
                 data.append(media_data)
             params['media'] = json.dumps(data)
             result = requests.post(self.api_url + self.token + "/sendMediaGroup", data=params)
