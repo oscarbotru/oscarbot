@@ -1,5 +1,6 @@
 import json
 import os
+import random
 
 import requests
 from django.conf import settings
@@ -53,10 +54,11 @@ class Bot:
 
         params['disable_web_page_preview'] = disable_web_page_preview
         if photo:
+            value = random.randint(1, 10 ** 100)
             if 'https://' in photo:
-                params['photo'] = f'{photo}'  # ?random=58&random=64
+                params['photo'] = f'{photo}?random={value}&random={value}'
             else:
-                params['photo'] = f'{settings.BASE_URL}{settings.MEDIA_URL}{photo}'  # ?random=58&random=64
+                params['photo'] = f'{settings.BASE_URL}{settings.MEDIA_URL}{photo}?random={value}&random={value}'
             params['caption'] = params['text']
             result = requests.post(self.api_url + self.token + "/sendPhoto", data=params)
         elif video:
