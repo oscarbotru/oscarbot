@@ -53,8 +53,8 @@ class Bot:
             params['reply_to_msg_id'] = reply_to_msg_id
 
         params['disable_web_page_preview'] = disable_web_page_preview
+        value = random.randint(1, 10 ** 100)
         if photo:
-            value = random.randint(1, 10 ** 100)
             if 'https://' in photo:
                 params['photo'] = f'{photo}?random={value}&random={value}'
             else:
@@ -63,24 +63,24 @@ class Bot:
             result = requests.post(self.api_url + self.token + "/sendPhoto", data=params)
         elif video:
             if video.startswith('https://'):
-                params['video'] = video
+                params['video'] = f'{video}?random={value}&random={value}'
             else:
-                params['video'] = f'{settings.BASE_URL}{settings.MEDIA_URL}{video}'
+                params['video'] = f'{settings.BASE_URL}{settings.MEDIA_URL}{video}?random={value}&random={value}'
             params['caption'] = params['text']
             result = requests.post(self.api_url + self.token + "/sendVideo", data=params)
         elif file:
             if file.startswith('https://'):
-                params['document'] = file
+                params['document'] = f'{file}?random={value}&random={value}'
             else:
-                params['document'] = f'{settings.BASE_URL}{settings.MEDIA_URL}{file}'
+                params['document'] = f'{settings.BASE_URL}{settings.MEDIA_URL}{file}?random={value}&random={value}'
             params['caption'] = params['text']
             result = requests.post(self.api_url + self.token + "/sendDocument", data=params)
         elif media_group:
             data = []
             for file in media_group:
-                media = file['media']
+                media = f"{file['media']}?random={value}&random={value}"
                 if not media.startswith('https://'):
-                    media = f'{settings.BASE_URL}{settings.MEDIA_URL}{media}'
+                    media = f'{settings.BASE_URL}{settings.MEDIA_URL}{media}?random={value}&random={value}'
                 media_data = {
                     'type': media_group_type,
                     'parse_mode': parse_mode,
