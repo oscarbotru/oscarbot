@@ -41,11 +41,13 @@ class Message:
         if key in content:
             message_data = content[key]
             if message_data:
+                print(message_data)
                 self.id = message_data.get('message_id') or message_data['message']['message_id']
                 self.date = message_data.get('date')
                 self.text = message_data.get('text')
                 self.data = message_data.get('data')
                 self.photo = message_data.get('photo')
+                self.voice = message_data.get('voice')
                 self.document = message_data.get('document')
                 self.user = User(message_data.get('from'))
                 self.chat = Chat(message_data.get('chat') or message_data['message']['chat'])
