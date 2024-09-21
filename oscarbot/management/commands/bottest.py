@@ -15,5 +15,6 @@ class Command(BaseCommand):
         bot_model = get_bot_model()
         bot_object = bot_model.objects.all().first()
         bot = Bot(bot_object.token)
-        res = bot.send_message(310780174, 'test',
-                               video='https://file-examples.com/storage/fe5048eb7365a64ba96daa9/2017/04/file_example_MP4_480_1_5MG.mp4')
+        print(bot.get_file('AwACAgIAAxkBAAIC7maydynDzcZ-Vca2BrVJz-I4MGI4AAKBWQACew2RSRpazyb9k7FjNQQ'))
+        # res = bot.send_message(310780174, 'test',
+        #                        video='https://file-examples.com/storage/fe5048eb7365a64ba96daa9/2017/04/file_example_MP4_480_1_5MG.mp4')

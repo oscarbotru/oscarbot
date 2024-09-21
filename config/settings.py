@@ -134,3 +134,4 @@ OSCARBOT_APPS = [
 TELEGRAM_URL = os.getenv('TELEGRAM_URL', 'https://api.telegram.org/bot')
 TELEGRAM_PARSE_MODE = 'HTML'
 TELEGRAM_TEXT_PROCESSOR = 'example.text_processor.handler'
+TELEGRAM_VOICE_PROCESSOR = 'example.voice_processor.handler'

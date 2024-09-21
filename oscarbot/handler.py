@@ -46,6 +46,7 @@ class BaseHandler:
         return TGResponse(message=message)
 
     def handle(self) -> TGResponse:
+        print(self.message.voice)
         if hasattr(self.message, 'data') and self.message.data:
             return self.__handle_callback_data(self.message.data)
         elif hasattr(self.message, 'text') and self.message.text:
@@ -54,8 +55,24 @@ class BaseHandler:
             return self.__handle_photo_data()
         elif hasattr(self.message, 'document') and self.message.document:
             return self.__handle_document_data()
-        else:
-            return self.__send_do_not_understand()
+        elif hasattr(self.message, 'voice') and self.message.voice:
+            return self.__handle_voice_data()
+        return self.__send_do_not_understand()
+
+    def __handle_voice_data(self):
+        mod_name, func_name = settings.TELEGRAM_VOICE_PROCESSOR.rsplit('.', 1)
+        mod = importlib.import_module(mod_name)
+        audio_processor = getattr(mod, func_name)
+        voice_file = self.bot.get_file(self.message.voice.get('file_id'))
+        print(voice_file)
+        data = {
+            'voice': voice_file,
+        }
+        response = audio_processor(self.user, data)
+        if response:
+            return response
+
+        return False
 
     def __get_text_handler(self, photo=None):
         mod_name, func_name = settings.TELEGRAM_TEXT_PROCESSOR.rsplit('.', 1)
