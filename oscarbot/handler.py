@@ -46,7 +46,7 @@ class BaseHandler:
         return TGResponse(message=message)
 
     def __work_text_processor(self, photo=None):
-        if getattr(settings, 'TELEGRAM_TEXT_PROCESSOR'):
+        if getattr(settings, 'TELEGRAM_TEXT_PROCESSOR', None):
             response = self.__get_text_handler(photo=photo)
             if response:
                 return response
