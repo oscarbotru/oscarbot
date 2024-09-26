@@ -45,8 +45,14 @@ class BaseHandler:
             message = settings.NOT_UNDERSTAND_MESSAGE
         return TGResponse(message=message)
 
+    def __work_text_processor(self, photo=None):
+        if getattr(settings, 'TELEGRAM_TEXT_PROCESSOR', None):
+            response = self.__get_text_handler(photo=photo)
+            if response:
+                return response
+        return self.__send_do_not_understand()
+
     def handle(self) -> TGResponse:
-        print(self.message.voice)
         if hasattr(self.message, 'data') and self.message.data:
             return self.__handle_callback_data(self.message.data)
         elif hasattr(self.message, 'text') and self.message.text:
@@ -57,14 +63,13 @@ class BaseHandler:
             return self.__handle_document_data()
         elif hasattr(self.message, 'voice') and self.message.voice:
             return self.__handle_voice_data()
-        return self.__send_do_not_understand()
+        return self.__work_text_processor()
 
     def __handle_voice_data(self):
         mod_name, func_name = settings.TELEGRAM_VOICE_PROCESSOR.rsplit('.', 1)
         mod = importlib.import_module(mod_name)
         audio_processor = getattr(mod, func_name)
         voice_file = self.bot.get_file(self.message.voice.get('file_id'))
-        print(voice_file)
         data = {
             'voice': voice_file,
         }
@@ -106,12 +111,7 @@ class BaseHandler:
             action = Action(self.user, self.message.text)
             return action()
 
-        if settings.TELEGRAM_TEXT_PROCESSOR:
-            response = self.__get_text_handler()
-            if response:
-                return response
-
-        return self.__send_do_not_understand()
+        return self.__work_text_processor()
 
     def __handle_photo_data(self):
         """ WIP: """
@@ -123,16 +123,8 @@ class BaseHandler:
             photos.append(
                 f'https://api.telegram.org/file/bot{self.bot.token}/{file_path}'
             )
-
-        if settings.TELEGRAM_TEXT_PROCESSOR:
-            response = self.__get_text_handler(photo=photos)
-            if response:
-                return response
-
-        return self.__send_do_not_understand()
+        return self.__work_text_processor(photo=photos)
 
     def __handle_document_data(self):
         """ WIP: """
-        return TGResponse(
-            message=''
-        )
+        return self.__work_text_processor()
