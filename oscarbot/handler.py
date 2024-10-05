@@ -45,7 +45,7 @@ class BaseHandler:
         if getattr(settings, 'NOT_UNDERSTAND_NEED_UPDATE', None):
             need_update = settings.NOT_UNDERSTAND_NEED_UPDATE
         if getattr(settings, 'NOT_UNDERSTAND_IS_DELETE_MESSAGE', None):
-            is_delete_message = settings.NOT_UNDERSTAND_MENU
+            is_delete_message = settings.NOT_UNDERSTAND_IS_DELETE_MESSAGE
         if getattr(settings, 'NOT_UNDERSTAND_MENU', None):
             mod_name, func_name = settings.NOT_UNDERSTAND_MENU.rsplit('.', 1)
             mod = importlib.import_module(mod_name)
@@ -74,18 +74,18 @@ class BaseHandler:
         return self.__work_text_processor()
 
     def __handle_voice_data(self):
-        mod_name, func_name = settings.TELEGRAM_VOICE_PROCESSOR.rsplit('.', 1)
-        mod = importlib.import_module(mod_name)
-        audio_processor = getattr(mod, func_name)
-        voice_file = self.bot.get_file(self.message.voice.get('file_id'))
-        data = {
-            'voice': voice_file,
-        }
-        response = audio_processor(self.user, data)
-        if response:
-            return response
-
-        return False
+        if getattr(settings, 'TELEGRAM_VOICE_PROCESSOR', None):
+            mod_name, func_name = settings.TELEGRAM_VOICE_PROCESSOR.rsplit('.', 1)
+            mod = importlib.import_module(mod_name)
+            audio_processor = getattr(mod, func_name)
+            voice_file = self.bot.get_file(self.message.voice.get('file_id'))
+            data = {
+                'voice': voice_file,
+            }
+            response = audio_processor(self.user, data)
+            if response:
+                return response
+        return self.__send_do_not_understand()
 
     def __get_text_handler(self, photo=None):
         mod_name, func_name = settings.TELEGRAM_TEXT_PROCESSOR.rsplit('.', 1)
