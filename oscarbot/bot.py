@@ -16,7 +16,8 @@ class Bot:
 
     def send_message(self, chat_id, message, photo=None, video=None, file=None, media_group=None, has_spoiler=False,
                      media_group_type='photo', is_silent=False, is_background=False, reply_to_msg_id=None,
-                     parse_mode='HTML', reply_keyboard=None, protect_content=False, disable_web_page_preview=False):
+                     parse_mode='HTML', reply_keyboard=None, protect_content=False, disable_web_page_preview=False,
+                     is_delete_message=False, message_delete=None):
         """
         @param file:
         @param disable_web_page_preview:
@@ -33,6 +34,8 @@ class Bot:
         @param parse_mode:
         @param reply_keyboard:
         @param protect_content:
+        @param is_delete_message:
+        @param message_delete:
         @return: reply message json
         :param line_button:
         """
@@ -94,6 +97,8 @@ class Bot:
             result = requests.post(self.api_url + self.token + "/sendMediaGroup", data=params)
         else:
             result = requests.post(self.api_url + self.token + "/sendMessage", data=params)
+        if is_delete_message:
+            self.delete_message(chat_id, message_delete)
         content = result.content.decode('utf-8')
         return content
 
@@ -134,7 +139,7 @@ class Bot:
         return content
 
     def update_message(self, chat_id, message, message_id, is_silent=False, is_background=False, reply_to_msg_id=None,
-                       parse_mode='HTML', reply_keyboard=None, **kwargs):
+                       parse_mode='HTML', reply_keyboard=None, is_delete_message=False, message_delete=None):
         params = {
             'chat_id': chat_id,
             'message_id': message_id,
@@ -155,6 +160,8 @@ class Bot:
         params['disable_web_page_preview'] = True
         result = requests.post(self.api_url + self.token + "/editMessageText", data=params)
         content = result.content.decode('utf-8')
+        if is_delete_message:
+            self.delete_message(chat_id, message_delete)
         return content
 
     def delete_message(self, chat_id, message_id):
