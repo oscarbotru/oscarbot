@@ -36,14 +36,22 @@ class BaseHandler:
             return user_in_db
         return None
 
-    def __send_do_not_understand(self):
-        if self.user:
-            self.user.last_message_id = None
-            self.user.save()
+    @classmethod
+    def __send_do_not_understand(cls):
+        need_update, is_delete_message, menu = False, False, None
         message = "Извините, я не понимаю Вас :("
         if getattr(settings, 'NOT_UNDERSTAND_MESSAGE', None):
             message = settings.NOT_UNDERSTAND_MESSAGE
-        return TGResponse(message=message)
+        if getattr(settings, 'NOT_UNDERSTAND_NEED_UPDATE', None):
+            need_update = settings.NOT_UNDERSTAND_NEED_UPDATE
+        if getattr(settings, 'NOT_UNDERSTAND_IS_DELETE_MESSAGE', None):
+            is_delete_message = settings.NOT_UNDERSTAND_MENU
+        if getattr(settings, 'NOT_UNDERSTAND_MENU', None):
+            mod_name, func_name = settings.NOT_UNDERSTAND_MENU.rsplit('.', 1)
+            mod = importlib.import_module(mod_name)
+            get_menu = getattr(mod, func_name)
+            menu = get_menu()
+        return TGResponse(message=message, menu=menu, need_update=need_update, is_delete_message=is_delete_message)
 
     def __work_text_processor(self, photo=None):
         if getattr(settings, 'TELEGRAM_TEXT_PROCESSOR', None):
