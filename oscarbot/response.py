@@ -11,7 +11,7 @@ class TGResponse:
     def __init__(self, message: str, menu=None, need_update=True, photo=None, attache=None, video=None,
                  file=None, media_group: list[dict] = None, media_group_type='photo', has_spoiler=False, protect=False,
                  callback_text='', callback_url=False, show_alert=False, cache_time=None,
-                 disable_web_page_preview=False) -> None:
+                 disable_web_page_preview=False, is_delete_message=False) -> None:
         self.tg_bot = None
         self.message = message
         self.menu = menu
@@ -30,6 +30,7 @@ class TGResponse:
         self.show_alert = show_alert
         self.cache_time = cache_time
         self.disable_web_page_preview = disable_web_page_preview
+        self.is_delete_message = is_delete_message
 
     def send(self, token, user=None, content=None, t_id=None):
         self.tg_bot = Bot(token)
@@ -46,7 +47,8 @@ class TGResponse:
             'protect_content': self.protect,
             'parse_mode': self.parse_mode,
             'disable_web_page_preview': self.disable_web_page_preview,
-            'file': self.file
+            'file': self.file,
+            'is_delete_message': self.is_delete_message,
         }
 
         if self.media_group:
@@ -55,10 +57,19 @@ class TGResponse:
             data_to_send['has_spoiler'] = self.has_spoiler
             self.need_update = False
 
+        if content:
+            message = content.get('message')
+            if not message:
+                callback_query = content.get('callback_query')
+                message = callback_query.get('message') if callback_query else None
+            if message:
+                message_id = message.get('message_id')
+                data_to_send['message_delete'] = message_id
+
         if self.need_update and user.last_message_id:
             response_content = self.tg_bot.update_message(**data_to_send, message_id=user.last_message_id)
             response_dict = json.loads(response_content)
-            if not response_dict.get('ok'):
+            if not response_dict.get('ok') and not self.is_delete_message:
                 response_content = self.tg_bot.send_message(**data_to_send)
         else:
             response_content = self.tg_bot.send_message(**data_to_send)
