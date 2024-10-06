@@ -139,7 +139,7 @@ class Bot:
         return content
 
     def update_message(self, chat_id, message, message_id, is_silent=False, is_background=False, reply_to_msg_id=None,
-                       parse_mode='HTML', reply_keyboard=None, is_delete_message=False, message_delete=None):
+                       parse_mode='HTML', reply_keyboard=None, is_delete_message=False, message_delete=None, **_):
         params = {
             'chat_id': chat_id,
             'message_id': message_id,
