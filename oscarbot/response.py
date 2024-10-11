@@ -57,6 +57,7 @@ class TGResponse:
             data_to_send['has_spoiler'] = self.has_spoiler
             self.need_update = False
 
+        message_id = None
         if content:
             message = content.get('message')
             if not message:
@@ -66,14 +67,15 @@ class TGResponse:
                 message_id = message.get('message_id')
                 data_to_send['message_delete'] = message_id
 
-        if self.need_update and user.last_message_id:
-            response_content = self.tg_bot.update_message(**data_to_send, message_id=user.last_message_id)
+        if self.need_update:
+            response_content = self.tg_bot.update_message(**data_to_send, message_id=message_id)
             response_dict = json.loads(response_content)
-            if not response_dict.get('ok') and not self.is_delete_message:
-                response_content = self.tg_bot.send_message(**data_to_send)
+            if not response_dict.get('ok'):
+                if self.is_delete_message:
+                    response_content = self.tg_bot.update_message(**data_to_send, message_id=user.last_message_id)
         else:
             response_content = self.tg_bot.send_message(**data_to_send)
-        log.info(f'{response_content}')
+        log.info(response_content)
         if user:
             user.update_last_sent_message(response_content)
 
