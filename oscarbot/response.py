@@ -58,7 +58,11 @@ class TGResponse:
             data_to_send['has_spoiler'] = self.has_spoiler
             self.need_update = False
 
-        update_chat_message = settings.UPDATE_CHAT_MESSAGE if getattr(settings, 'UPDATE_CHAT_MESSAGE', None) else True
+        update_chat_message = True
+        update_chat_attr = getattr(settings, 'UPDATE_CHAT_MESSAGE', None)
+        if update_chat_attr is not None:
+            update_chat_message = update_chat_attr
+
         if update_chat_message:
             message_id = None
             if content:
@@ -68,9 +72,9 @@ class TGResponse:
                     message = callback_query.get('message') if callback_query else None
                 if message:
                     message_id = message.get('message_id')
-                    data_to_send['message_delete'] = message_id
         else:
             message_id = user.last_message_id
+        data_to_send['message_delete'] = message_id
 
         if self.need_update:
             response_content = self.tg_bot.update_message(**data_to_send, message_id=message_id)
