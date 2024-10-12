@@ -209,7 +209,7 @@ class User(AbstractUser):
 
 class TGUser(BaseUser):
     """Telegram user."""
-    user = models.OneToOneField(User, models.SET_NULL, **NULLABLE, related_name='tg_user', verbose_name='пользователь')
+    user = models.OneToOneField(User, models.SET_NULL, **NULLABLE, related_name='tg_user', verbose_name='user tg')
 
     class Meta:
         verbose_name = 'profile Telegram'
