@@ -8,15 +8,16 @@ from oscarbot.bot_logger import log
 
 class TGResponse:
 
-    def __init__(self, message: str, menu=None, need_update=True, photo=None, attache=None, video=None,
+    def __init__(self, message: str, menu=None, need_update: bool | None = None, photo=None, attache=None, video=None,
                  file=None, media_group: list[dict] = None, media_group_type='photo', has_spoiler=False, protect=False,
                  callback_text='', callback_url=False, show_alert=False, cache_time=None,
                  disable_web_page_preview=False, is_delete_message=False) -> None:
+        need_update_setting = settings.TELEGRAM_NEED_UPDATE if getattr(settings, 'TELEGRAM_NEED_UPDATE', None) else True
         self.tg_bot = None
         self.message = message
         self.menu = menu
         self.attache = attache
-        self.need_update = need_update
+        self.need_update = need_update if need_update is not None else need_update_setting
         self.photo = photo
         self.video = video
         self.file = file
@@ -57,15 +58,19 @@ class TGResponse:
             data_to_send['has_spoiler'] = self.has_spoiler
             self.need_update = False
 
-        message_id = None
-        if content:
-            message = content.get('message')
-            if not message:
-                callback_query = content.get('callback_query')
-                message = callback_query.get('message') if callback_query else None
-            if message:
-                message_id = message.get('message_id')
-                data_to_send['message_delete'] = message_id
+        update_chat_message = settings.UPDATE_CHAT_MESSAGE if getattr(settings, 'UPDATE_CHAT_MESSAGE', None) else True
+        if update_chat_message:
+            message_id = None
+            if content:
+                message = content.get('message')
+                if not message:
+                    callback_query = content.get('callback_query')
+                    message = callback_query.get('message') if callback_query else None
+                if message:
+                    message_id = message.get('message_id')
+                    data_to_send['message_delete'] = message_id
+        else:
+            message_id = user.last_message_id
 
         if self.need_update:
             response_content = self.tg_bot.update_message(**data_to_send, message_id=message_id)
