@@ -92,6 +92,11 @@ quick_bot.send()
 
     [example application](https://github.com/oscarbotru/oscarbot/tree/master/example/)
 
+* Command to add or update a bot in the database
+```shell
+python manage.py create_bot_db
+```
+
 * Long polling server for testing
 ```shell
 python manage.py runbot
@@ -107,6 +112,139 @@ python manage.py runbot
 # TODO: work in progress
 ```
 
+## Project Structure
+```
+Django-project
+├── first_app/
+├── second_app/
+├── config/
+├── main
+│   ├── menus
+│   │   ├── __init__.py
+│   │   └── start_menu.py
+│   ├── views
+│   │   ├── __init__.py
+│   │   └── start.py
+│   ├── __init__.py
+│   ├── actions.py  
+│   ├── admin.py  
+│   ├── app.py  
+│   ├── models.py  
+│   ├── router.py
+│   └── text_processor.py
+├ manage.py
+├ requirements.txt
+```
+
+### Example menus/start_menu.py
+```python
+from oscarbot.menu import Button, Menu
+
+
+def get_start_menu() -> Menu:
+    """Get start menu."""
+    feedback_url = 'https://example.com'
+    buttons = [
+        Button('Home', callback='/start'),
+        Button('Page', callback='/my_router/'),
+        Button('Feedback', url=feedback_url),
+    ]
+    return Menu(buttons)
+```
+
+### Example views/start.py
+```python
+from oscarbot.response import TGResponse
+
+from main.actions import YOUR_ACTION
+from main.menus import start_menu
+from users.models import TGUser
+
+
+def star(user: TGUser) -> TGResponse:
+    """Home."""
+    user.clean_state()  # clean want_action and state_information
+    user.want_action = YOUR_ACTION
+    user.save()
+    message = 'Welcome!'
+    menu = start_menu.get_start_menu()
+    return TGResponse(message, menu, need_update=False)
+```
+
+### Example actions.py
+```python
+from oscarbot.response import TGResponse
+
+from main.menus import start_menu
+from users.models import TGUser
+
+YOUR_ACTION = 'main.action__your_action'
+
+
+def action__your_action(user: TGUser, message: str) -> TGResponse:
+    """Action."""
+    user.state_information = message  # your logic
+    user.save()
+    message_response = 'Your message'
+    menu = start_menu.get_start_menu()
+    return TGResponse(message_response, menu, need_update=True, is_delete_message=True)
+```
+
+# Example models.py
+```python
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+from oscarbot.models import BaseUser
+
+NULLABLE = {'blank': True, 'null': True}
+
+
+class User(AbstractUser):
+    """User model"""
+
+    class Meta:
+        verbose_name = 'user'
+        verbose_name_plural = 'users'
+
+
+class TGUser(BaseUser):
+    """Telegram user"""
+    user = models.OneToOneField(User, models.SET_NULL, **NULLABLE, related_name='tg_user', verbose_name='пользователь')
+
+    class Meta:
+        verbose_name = 'profile Telegram'
+        verbose_name_plural = 'profiles Telegram'
+
+    def __str__(self):
+        return f'{self.t_id}'
+
+```
+
+### Example router.py
+```python
+from oscarbot.router import route
+
+from main.views import start
+
+routes = [
+    route('/start', start),
+]
+```
+
+### Example text_processor.py
+```python
+from oscarbot.response import TGResponse
+
+from main.menus import start_menu
+from users.models import TGUser
+
+
+def handler(user: TGUser, message: dict) -> TGResponse:
+    """Handler."""
+    message_response = 'Your message'
+    menu = start_menu.get_start_menu()
+    return TGResponse(message_response, menu)
+```
 
 ## Links
 
