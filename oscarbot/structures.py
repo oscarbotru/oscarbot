@@ -41,7 +41,6 @@ class Message:
         if key in content:
             message_data = content[key]
             if message_data:
-                print(message_data)
                 self.id = message_data.get('message_id') or message_data['message']['message_id']
                 self.date = message_data.get('date')
                 self.text = message_data.get('text')
