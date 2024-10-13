@@ -79,9 +79,20 @@ menu = Menu(button_list)
 * Message builder
 ```python
 from oscarbot.shortcut import QuickBot
+from oscarbot.models import User
 
+user: User = User.objects.first()  # example
+
+# Send a message to chat
 quick_bot = QuickBot(
-    chat=111111111,
+    message='Hello from command line',
+    token='token can be saved in DB and not required'
+)
+quick_bot.send_chat(chat_id='-100111111111')
+
+# Send a message to chatbot
+quick_bot = QuickBot(
+    user=user,
     message='Hello from command line',
     token='token can be saved in DB and not required'
 )
@@ -147,6 +158,7 @@ def get_start_menu() -> Menu:
     buttons = [
         Button('Home', callback='/start'),
         Button('Page', callback='/my_router/'),
+        Button('Page with param', callback='/my_router/param/'),
         Button('Feedback', url=feedback_url),
     ]
     return Menu(buttons)
@@ -161,12 +173,20 @@ from main.menus import start_menu
 from users.models import TGUser
 
 
-def star(user: TGUser) -> TGResponse:
+def star(user: TGUser, param: str = None) -> TGResponse:
     """Home."""
     user.clean_state()  # clean want_action and state_information
     user.want_action = YOUR_ACTION
     user.save()
     message = 'Welcome!'
+    menu = start_menu.get_start_menu()
+    return TGResponse(message, menu, need_update=False)
+
+def my_router(user: TGUser, param: str = None) -> TGResponse:
+    """Home."""
+    message = 'message!'
+    if param is not None:
+      message += f'\n{user.t_id}'
     menu = start_menu.get_start_menu()
     return TGResponse(message, menu, need_update=False)
 ```
@@ -224,10 +244,12 @@ class TGUser(BaseUser):
 ```python
 from oscarbot.router import route
 
-from main.views import start
+from main.views import start, my_router
 
 routes = [
     route('/start', start),
+    route('/my_router/<param>/', my_router),
+    route('/my_router/', my_router),
 ]
 ```
 
