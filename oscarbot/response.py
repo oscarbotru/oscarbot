@@ -63,6 +63,7 @@ class TGResponse:
         if update_chat_attr is not None:
             update_chat_message = update_chat_attr
 
+        last_message_id = user.last_message_id if user else None
         if update_chat_message:
             message_id = None
             if content:
@@ -73,7 +74,7 @@ class TGResponse:
                 if message:
                     message_id = message.get('message_id')
         else:
-            message_id = user.last_message_id
+            message_id = last_message_id
         data_to_send['message_delete'] = message_id
 
         if self.need_update:
@@ -81,7 +82,7 @@ class TGResponse:
             response_dict = json.loads(response_content)
             if not response_dict.get('ok'):
                 if self.is_delete_message:
-                    response_content = self.tg_bot.update_message(**data_to_send, message_id=user.last_message_id)
+                    response_content = self.tg_bot.update_message(**data_to_send, message_id=last_message_id)
         else:
             response_content = self.tg_bot.send_message(**data_to_send)
         log.info(response_content)

@@ -20,6 +20,7 @@ class BaseHandler:
         self.content = content
         self.message = Message(content)
         self.user = self.__find_or_create_user_in_db()
+        self.chat_type = None
 
     def __find_or_create_user_in_db(self):
         if hasattr(self.message, 'user'):
@@ -58,7 +59,8 @@ class BaseHandler:
             response = self.__get_text_handler(photo=photo)
             if response:
                 return response
-        return self.__send_do_not_understand()
+            if response and self.chat_type not in ('supergroup', 'channel'):
+                return self.__send_do_not_understand()
 
     def handle(self) -> TGResponse:
         if hasattr(self.message, 'data') and self.message.data:
@@ -92,14 +94,17 @@ class BaseHandler:
         mod = importlib.import_module(mod_name)
         text_processor = getattr(mod, func_name)
         data = {
-            'text': self.message.text,
+            'text': self.message.text if getattr(self.message, 'text', None) else '',
+            'content': self.content,
             'photo': photo,
         }
+        content = data.get('content', {})
+        message = content.get('message', {})
+        chat = message.get('chat', {})
+        self.chat_type = chat.get('type', None)
         response = text_processor(self.user, data)
-        if response:
+        if response and self.chat_type not in ('supergroup', 'channel'):
             return response
-
-        return False
 
     def __handle_callback_data(self, path):
         router = Router(path)

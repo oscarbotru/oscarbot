@@ -1,36 +1,31 @@
-from django.conf import settings
-
-from oscarbot.menu import Menu
 from oscarbot.response import TGResponse
-from oscarbot.services import get_bot_model, get_bot_user_model
+from oscarbot.services import get_bot_model
+from oscarbot.models import User
 
 
-class QuickBot:
+class QuickBot(TGResponse):
+    """QuickBot."""
 
-    def __init__(self, user: object, message: str, token: str = None, menu: Menu = None):
-        """
-        Init QuickBot object for send message to Telegram user
-        @param user: user oscarbot.models.User object
-        @param message: text message
-        @param token: bot token, default get first bot from DB
-        @param menu: should be oscarbot.menu.Menu object
-        """
+    def __init__(self, user: User = None, token: str = None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         if token:
             self.token = token
         else:
             bot_model = get_bot_model()
-            bot_object = bot_model.objects.all().first()
+            bot_object = bot_model.objects.first()
             if bot_object:
                 self.token = bot_object.token
-
         self.user = user
-        self.message = message
-        self.menu = menu
 
-    def send(self):
-        response = TGResponse(message=self.message, menu=self.menu, need_update=False)
+    def send(self, token=None, user=None, content=None, t_id=None):
+        """Send a message."""
+        if token is None:
+            token = self.token
+        if user is None:
+            user = self.user
+        return super().send(token, user, content, t_id)
 
-        response.send(
-            self.token,
-            user=self.user
-        )
+    def send_chat(self, chat_id: str | int):
+        """Send a message to chat."""
+        self.need_update = False
+        return self.send(self.token, t_id=chat_id)
