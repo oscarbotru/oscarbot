@@ -40,8 +40,8 @@ class TGTestCase(TestCase):
 
     def call_router(self, path: str) -> TGResponse:
         """Returns TGResponse based on path."""
-        func, _ = Router(path)()
-        tg_response = func(self.tg_user)
+        func, args = Router(path)()
+        tg_response = func(self.tg_user, **args)
         return tg_response
 
     def call_action(self, action_path: str) -> TGResponse:
