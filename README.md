@@ -1,3 +1,5 @@
+from oscarbot.response import TGResponse
+
 # TG Core from Oscar
 > Telegram bot core only for webhooks way working
 
@@ -110,6 +112,66 @@ python manage.py runbot
 * Messages log
 ```python
 # TODO: work in progress
+```
+
+* Storage for text messages
+
+Make template of file inside any application from OSCARBOT_APPS setting
+```shell
+python manage.py messages
+```
+
+Collect all controllers-function which includes in router files
+```shell
+python manage.py messagee --collect
+```
+
+Hard reset template messages (it will clear your entered text)
+```shell
+python manage.py messagee --force
+```
+Usage:
+After collecting routers you need to text your messages in messages.yaml
+
+You can skip message at all:
+```python
+def start(user):
+    return TGResponse()
+```
+
+Or you can create custom message alias and message inside of messages.yaml:
+```yaml
+messages:
+  start: Hi!
+  custom_message: This is custom Hi!
+```
+
+After that you can use custom message alias though # symbol:
+```python
+def start(user):
+    return TGResponse(message='#custom_message')
+```
+
+In case you need paste arguments you can use templates strings in yaml:
+```yaml
+messages:
+  start: Hi, {1}! Is is your {2}`th visit!
+  custom_message: This is custom Hi, {1}!
+```
+
+And in view:
+```python
+def start(user):
+    return TGResponse(text_args=['User Name', '10'])
+```
+
+or 
+```python
+def start(user):
+    return TGResponse(
+      messge='#custom_message', 
+      text_args=['User Name']
+    )
 ```
 
 ## Project Structure
