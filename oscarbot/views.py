@@ -30,9 +30,9 @@ def handle_content(token, content):
             if tg_response:
                 if tg_response.can_send():
                     tg_response.send(token, handler.user, content)
-                return HttpResponse(content=b"OK")
+                return HttpResponse("OK")
         except Exception as ex:
             print(ex)
-            return HttpResponse(content=b"OK")
+            return HttpResponse("OK")
     else:
         raise RuntimeError('Failed to find bot')

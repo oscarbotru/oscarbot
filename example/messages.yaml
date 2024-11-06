@@ -1,9 +1,0 @@
-# To set multilines message text use triple quotes ''' set text here '''
-
-defaults:
-  dont_know: '''Sorry, i do not know this action'''
-  text_processor: '''  '''
-  voice_processor: '''  '''
-messages:
-  first_question: ''' {1}, {2} '''
-  start: 'Привет! Мы здесь, чтобы продиагностировать твой бизнес. Начнем?'
