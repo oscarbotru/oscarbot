@@ -10,4 +10,7 @@ def handler(user, text):
     #     Button("Да", callback="/diagnostic/"),
     # ])
 
-    return TGResponse(message=message)
+    return TGResponse(
+        message=message,
+        # menu=menu
+    )
