@@ -1,23 +1,21 @@
+from quopri import needsquoting
+
 from oscarbot.menu import Menu, Button
+from oscarbot.messages import get_msg
 from oscarbot.response import TGResponse
 
 
-def start(user):
-    menu = Menu([
-        Button("Начнем", callback="/diagnostic/"),
-    ])
+def start(_):
     return TGResponse(
-        message="Привет! Мы здесь, чтобы продиагностировать твой бизнес. Начнем?",
-        video='https://file-examples.com/storage/fe5048eb7365a64ba96daa9/2017/04/file_example_MP4_480_1_5MG.mp4'
-        # menu=menu
+        need_update=False
     )
 
 
-def first_question(user):
+def first_question(_):
     menu = Menu([
         Button("Да", callback="/diagnostic/"),
     ])
     return TGResponse(
-        message="Привет! Мы здесь, чтобы продиагностировать твой бизнес. Начнем?",
-        menu=menu
+        message=get_msg(text_args=['qweqwe', 'qwdqweqw']),
+        menu=menu,
     )
