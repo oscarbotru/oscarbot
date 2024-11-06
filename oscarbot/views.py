@@ -17,8 +17,8 @@ def bot_view(request, token):
 
 
 def handle_content(token, content):
-    if getattr(settings, 'TELEGRAM_BOT_TOKEN', None):
-        bot_token = settings.TELEGRAM_BOT_TOKEN
+    if getattr(settings, 'TELEGRAM_API_TOKEN', None):
+        bot_token = settings.TELEGRAM_API_TOKEN
     else:
         bot_model = get_bot_model()
         current_bot = bot_model.objects.filter(token=token).first()

@@ -21,7 +21,7 @@ class Command(BaseCommand):
         bot = bot_model.objects.all().first()
         if not bot:
             bot = self.BotData()
-            bot.token = settings.TELEGRAM_BOT_TOKEN if getattr(settings, 'TELEGRAM_BOT_TOKEN', None) else None
+            bot.token = settings.TELEGRAM_API_TOKEN if getattr(settings, 'TELEGRAM_API_TOKEN', None) else None
         offset = 0
         try:
             while True:
@@ -44,6 +44,6 @@ class Command(BaseCommand):
             log.error(f'Token from Telegram not found\n{e}')
         except AttributeError as e:
             log.error(f'Add the bot token to the database in {bot_model}\n'
-                      f'Or settings.py attribute TELEGRAM_BOT_TOKEN\n{e}')
+                      f'Or settings.py attribute TELEGRAM_API_TOKEN\n{e}')
         except KeyboardInterrupt:
             log.info(f'Exit bot server')
