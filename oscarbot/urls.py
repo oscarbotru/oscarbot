@@ -2,8 +2,8 @@ from django.urls import path
 
 from oscarbot.views import bot_view
 
-app_name = 'api'
+app_name = 'oscarbot'
 
 urlpatterns = [
-    path('bot<str:token>/', bot_view), # deprecated
+    path('api/bot<str:token>/', bot_view),
 ]

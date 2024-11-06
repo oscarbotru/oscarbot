@@ -1,44 +1,84 @@
 import json
-
+import inspect
 from django.conf import settings
 
 from oscarbot.bot import Bot
 from oscarbot.bot_logger import log
+from oscarbot.messages import get_msg
 
 
-class TGResponse:
-
-    def __init__(self, message: str, menu=None, need_update: bool | None = None, photo=None, attache=None, video=None,
-                 file=None, media_group: list[dict] = None, media_group_type='photo', has_spoiler=False, protect=False,
-                 callback_text='', callback_url=False, show_alert=False, cache_time=None,
-                 disable_web_page_preview=False, is_delete_message=False) -> None:
-        need_update_setting = settings.TELEGRAM_NEED_UPDATE if getattr(settings, 'TELEGRAM_NEED_UPDATE', None) else True
-        self.tg_bot = None
-        self.message = message
+class TGResponseBase:
+    def __init__(
+            self,
+            menu=None,
+            need_update: bool | None = None,
+            is_delete_message=False,
+            has_spoiler=False,
+            protect=False,
+            disable_web_page_preview=False,
+    ):
         self.menu = menu
-        self.attache = attache
+
+        need_update_setting = settings.TELEGRAM_NEED_UPDATE if getattr(settings, 'TELEGRAM_NEED_UPDATE', None) else True
         self.need_update = need_update if need_update is not None else need_update_setting
+
+        self.has_spoiler = has_spoiler
+        self.protect = protect
+
+        self.is_delete_message = is_delete_message
+
+        self.disable_web_page_preview = disable_web_page_preview
+
+        self.tg_bot = None
+        self.parse_mode = settings.TELEGRAM_PARSE_MODE if getattr(settings, 'TELEGRAM_PARSE_MODE', None) else 'HTML'
+
+
+class TGResponseMedia:
+
+    def __init__(
+            self,
+            photo=None,
+            attache=None,
+            video=None,
+            file=None,
+            media_group: list[dict] = None,
+            media_group_type='photo',
+            **kwargs
+    ):
+        super().__init__(**kwargs)
+        self.attache = attache
         self.photo = photo
         self.video = video
         self.file = file
         self.media_group = media_group if media_group else None
         self.media_group_type = media_group_type
-        self.has_spoiler = has_spoiler
-        self.protect = protect
-        self.parse_mode = settings.TELEGRAM_PARSE_MODE if getattr(settings, 'TELEGRAM_PARSE_MODE', None) else 'HTML'
+
+
+class TGResponse(TGResponseMedia, TGResponseBase):
+
+    def __init__(
+            self,
+            message: str | None = None,
+            callback_text='',
+            callback_url=False,
+            show_alert=False,
+            cache_time=None,
+            **kwargs,
+    ) -> None:
+        super().__init__(**kwargs)
         self.callback_url = callback_url
         self.callback_text = callback_text
         self.show_alert = show_alert
         self.cache_time = cache_time
-        self.disable_web_page_preview = disable_web_page_preview
-        self.is_delete_message = is_delete_message
 
-    def send(self, token, user=None, content=None, t_id=None):
-        self.tg_bot = Bot(token)
-        if content and (self.callback_text or self.callback_url):
-            self.send_callback(content)
-        if self.menu:
-            self.menu = self.menu.build()
+        if message is None:
+            self.message = get_msg(inspect.stack()[1][3])
+        elif message.startswith('#'):
+            self.message = get_msg(message.replace('#', ''))
+        else:
+            self.message = message
+
+    def __collect_data_to_send(self, user, t_id=None) -> dict:
         data_to_send = {
             'chat_id': user.t_id if user is not None else t_id,
             'message': self.message,
@@ -58,6 +98,10 @@ class TGResponse:
             data_to_send['has_spoiler'] = self.has_spoiler
             self.need_update = False
 
+        return data_to_send
+
+    @staticmethod
+    def __get_message_id(user, content):
         update_chat_message = True
         update_chat_attr = getattr(settings, 'UPDATE_CHAT_MESSAGE', None)
         if update_chat_attr is not None:
@@ -74,14 +118,27 @@ class TGResponse:
                     message_id = message.get('message_id')
         else:
             message_id = user.last_message_id
+
+        return message_id
+
+    def send(self, token, user=None, content=None, t_id=None):
+        self.tg_bot = Bot(token)
+        if content and (self.callback_text or self.callback_url):
+            self.send_callback(content)
+        if self.menu:
+            self.menu = self.menu.build()
+
+
+        data_to_send = self.__collect_data_to_send(user, t_id)
+
+        message_id = self.__get_message_id(user, content)
         data_to_send['message_delete'] = message_id
 
         if self.need_update:
             response_content = self.tg_bot.update_message(**data_to_send, message_id=message_id)
             response_dict = json.loads(response_content)
-            if not response_dict.get('ok'):
-                if self.is_delete_message:
-                    response_content = self.tg_bot.update_message(**data_to_send, message_id=user.last_message_id)
+            if not response_dict.get('ok') and self.is_delete_message:
+                response_content = self.tg_bot.update_message(**data_to_send, message_id=user.last_message_id)
         else:
             response_content = self.tg_bot.send_message(**data_to_send)
         log.info(response_content)
