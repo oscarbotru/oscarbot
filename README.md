@@ -51,6 +51,15 @@ NOT_UNDERSTAND_IS_DELETE_MESSAGE = True  # Default - False
 TELEGRAM_PARSE_MODE = 'MARKDOWN'  # Default - 'HTML'
 
 ```
+
+In root urls add include urls from library:
+```python
+urlpatterns = [
+    path('', include('oscarbot.urls'))
+    ...
+]
+```
+
 Run django server and open [localhost:8000/admin/](http://localhost:8000/admin/) and create new bot, 
 at least fill bot token for testing ability
 ## Features
@@ -107,6 +116,11 @@ python manage.py runbot
 * Update messages available
 ```python
 # TODO: work in progress
+```
+
+* Set webhook for bot
+```shell
+python manage.py setwh
 ```
 
 * Messages log
