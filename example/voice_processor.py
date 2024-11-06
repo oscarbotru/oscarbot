@@ -11,8 +11,4 @@ def handler(user, voice):
     #     Button("Да", callback="/diagnostic/"),
     # ])
 
-    return TGResponse(
-        message=message,
-        # menu=menu
-        need_update=False
-    )
+    return TGResponse(message=message, need_update=False)
