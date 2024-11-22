@@ -58,6 +58,8 @@ class Menu:
         if self.mode == 'inline':
             log.info(f'{menu_items}')
             return json.dumps({'inline_keyboard': menu_items})
+        elif self.mode == 'keyboard_remove':
+            return json.dumps({'remove_keyboard': True})
         else:
             return json.dumps({
                 'keyboard': menu_items,
