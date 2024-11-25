@@ -98,6 +98,9 @@ class TGResponse(TGResponseMedia, TGResponseBase):
             data_to_send['has_spoiler'] = self.has_spoiler
             self.need_update = False
 
+        if self.photo:
+            self.need_update = False
+
         return data_to_send
 
     @staticmethod
@@ -139,6 +142,15 @@ class TGResponse(TGResponseMedia, TGResponseBase):
             response_dict = json.loads(response_content)
             if not response_dict.get('ok') and self.is_delete_message:
                 response_content = self.tg_bot.update_message(**data_to_send, message_id=user.last_message_id)
+                response_dict = json.loads(response_content)
+            check_update = response_dict.get('ok')
+            if isinstance(check_update, bool) and not check_update:
+                description = response_dict.get('description')
+                message_errors = [
+                    'Bad Request: there is no text in the message to edit',
+                ]
+                if description and description in message_errors:
+                    response_content = self.tg_bot.send_message(**data_to_send)
         else:
             response_content = self.tg_bot.send_message(**data_to_send)
         log.info(response_content)
