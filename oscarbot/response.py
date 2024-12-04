@@ -78,9 +78,14 @@ class TGResponse(TGResponseMedia, TGResponseBase):
         else:
             self.message = message
 
-    def __collect_data_to_send(self, user, t_id=None) -> dict:
+    def __collect_data_to_send(self, user, group, t_id=None) -> dict:
+        t_id_for_response = t_id
+        if group:
+            t_id_for_response = group.t_id
+        elif user is not None:
+            t_id_for_response = user.t_id
         data_to_send = {
-            'chat_id': user.t_id if user is not None else t_id,
+            'chat_id': t_id_for_response,
             'message': self.message,
             'reply_keyboard': self.menu,
             'photo': self.photo,
@@ -124,7 +129,7 @@ class TGResponse(TGResponseMedia, TGResponseBase):
 
         return message_id
 
-    def send(self, token, user=None, content=None, t_id=None):
+    def send(self, token, user=None, group=None, content=None, t_id=None):
         self.tg_bot = Bot(token)
         if content and (self.callback_text or self.callback_url):
             self.send_callback(content)
@@ -132,7 +137,7 @@ class TGResponse(TGResponseMedia, TGResponseBase):
             self.menu = self.menu.build()
 
 
-        data_to_send = self.__collect_data_to_send(user, t_id)
+        data_to_send = self.__collect_data_to_send(user, group, t_id)
 
         message_id = self.__get_message_id(user, content)
         data_to_send['message_delete'] = message_id

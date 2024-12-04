@@ -6,6 +6,16 @@ from django.db import models
 NULLABLE = {'blank': True, 'null': True}
 
 
+class Group(models.Model):
+    t_id = models.CharField(max_length=100, default='', verbose_name='Telegram ID')
+    username = models.CharField(max_length=200, default='', verbose_name='Username', **NULLABLE)
+    name = models.CharField(max_length=200, default='', verbose_name='Имя', **NULLABLE)
+
+    class Meta:
+        verbose_name = 'группа'
+        verbose_name_plural = 'группы'
+
+
 class BaseBot(models.Model):
     t_id = models.CharField(max_length=100, default='', verbose_name='Telegram ID')
     token = models.CharField(max_length=255, **NULLABLE, verbose_name='Bot token')
@@ -44,6 +54,8 @@ class BaseUser(models.Model):
     path = models.CharField(max_length=250, **NULLABLE)
     state_information = models.TextField(**NULLABLE)
     created = models.DateTimeField('Creation date', default=datetime.datetime.now)
+
+    groups = models.ManyToManyField('Group', blank=True)
 
     def update_last_sent_message(self, response_content):
         response_dict = json.loads(response_content)

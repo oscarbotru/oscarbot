@@ -1,5 +1,3 @@
-from quopri import needsquoting
-
 from oscarbot.menu import Menu, Button
 from oscarbot.messages import get_msg
 from oscarbot.response import TGResponse

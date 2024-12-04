@@ -29,7 +29,7 @@ def handle_content(token, content):
             tg_response = handler.handle()
             if tg_response:
                 if tg_response.can_send():
-                    tg_response.send(token, handler.user, content)
+                    tg_response.send(token, handler.user, handler.group, content)
                 return HttpResponse(content=b"OK")
         except Exception as ex:
             print(ex)

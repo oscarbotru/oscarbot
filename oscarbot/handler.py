@@ -5,6 +5,7 @@ from django.conf import settings
 
 from oscarbot.action import Action
 from oscarbot.bot import Bot
+from oscarbot.models import Group
 from oscarbot.response import TGResponse
 from oscarbot.router import Router
 from oscarbot.services import get_bot_user_model
@@ -20,6 +21,17 @@ class BaseHandler:
         self.content = content
         self.message = Message(content)
         self.user = self.__find_or_create_user_in_db()
+        self.group = self.__find_or_create_group_in_db()
+
+    def __find_or_create_group_in_db(self):
+        if hasattr(self.message, 'chat'):
+            if self.message.chat.type == 'group':
+                group_in_db, _ = Group.objects.get_or_create(
+                    t_id=self.message.chat.id
+                )
+                return group_in_db
+
+        return None
 
     def __find_or_create_user_in_db(self):
         if hasattr(self.message, 'user'):
