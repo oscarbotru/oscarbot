@@ -161,6 +161,7 @@ class TGResponse(TGResponseMedia, TGResponseBase):
         log.info(response_content)
         if user:
             user.update_last_sent_message(response_content)
+        return response_content
 
     def can_send(self):
         if self.message is not None or self.video is not None or self.photo is not None:
