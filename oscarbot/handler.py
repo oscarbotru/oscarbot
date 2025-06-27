@@ -65,9 +65,9 @@ class BaseHandler:
             menu = get_menu()
         return TGResponse(message=message, menu=menu, need_update=need_update, is_delete_message=is_delete_message)
 
-    def __work_text_processor(self, photo=None):
+    def __work_text_processor(self, photo=None, location=None):
         if getattr(settings, 'TELEGRAM_TEXT_PROCESSOR', None):
-            response = self.__get_text_handler(photo=photo)
+            response = self.__get_text_handler(photo=photo, location=location)
             if response:
                 return response
         return self.__send_do_not_understand()
@@ -83,7 +83,13 @@ class BaseHandler:
             return self.__handle_document_data()
         elif hasattr(self.message, 'voice') and self.message.voice:
             return self.__handle_voice_data()
+        elif hasattr(self.message, 'location') and self.message.location:
+            return self.__handle_location_data()
         return self.__work_text_processor()
+
+    def __handle_location_data(self):
+        location = self.message.location
+        return self.__work_text_processor(location=location)
 
     def __handle_voice_data(self):
         if getattr(settings, 'TELEGRAM_VOICE_PROCESSOR', None):
@@ -99,13 +105,14 @@ class BaseHandler:
                 return response
         return self.__send_do_not_understand()
 
-    def __get_text_handler(self, photo=None):
+    def __get_text_handler(self, photo=None, location=None):
         mod_name, func_name = settings.TELEGRAM_TEXT_PROCESSOR.rsplit('.', 1)
         mod = importlib.import_module(mod_name)
         text_processor = getattr(mod, func_name)
         data = {
             'text': self.message.text,
             'photo': photo,
+            'location': location,
         }
         response = text_processor(self.user, data)
         if response:
