@@ -153,6 +153,10 @@ class TGResponse(TGResponseMedia, TGResponseBase):
                 description = response_dict.get('description')
                 message_errors = [
                     'Bad Request: there is no text in the message to edit',
+                    'Bad Request: message can\'t be edited',
+                    'Bad Request: message is not modified: specified new message content and reply markup '
+                    'are exactly the same as a current content and reply markup of the message',
+                    'Bad Request: message to edit not found',
                 ]
                 if description and description in message_errors:
                     response_content = self.tg_bot.send_message(**data_to_send)

@@ -6,12 +6,13 @@ from oscarbot.bot_logger import log
 
 class Button:
 
-    def __init__(self, text, callback=None, url=None, web_app=None, ask_location=False):
+    def __init__(self, text, callback=None, url=None, web_app=None, ask_location=False, request_contact=False):
         self.text = text
         self.callback = callback
         self.url = url
         self.web_app = web_app
         self.ask_location = ask_location
+        self.request_contact = request_contact
 
     def build(self):
         menu_button = {
@@ -25,6 +26,8 @@ class Button:
             menu_button['web_app'] = {'url': self.web_app}
         elif self.ask_location:
             menu_button['request_location'] = True
+        elif self.request_contact:
+            menu_button['request_contact'] = True
         return menu_button
 
 
