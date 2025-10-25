@@ -162,7 +162,6 @@ class TGResponse(TGResponseMedia, TGResponseBase):
                     response_content = self.tg_bot.send_message(**data_to_send)
         else:
             response_content = self.tg_bot.send_message(**data_to_send)
-        log.info(response_content)
         if user:
             user.update_last_sent_message(response_content)
         return response_content
@@ -184,5 +183,4 @@ class TGResponse(TGResponseMedia, TGResponseBase):
                 'show_alert': self.show_alert,
                 'cache_time': self.cache_time,
             }
-            response_content = self.tg_bot.answer_callback_query(**params)
-            log.info(response_content)
+            self.tg_bot.answer_callback_query(**params)

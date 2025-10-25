@@ -38,11 +38,11 @@ class Message:
 
     def __init__(self, content):
         self.update_id = content.get('update_id')
-        key = 'callback_query' if 'callback_query' in content else 'message'
+        cq = 'callback_query'
+        key = cq if cq in content else 'message' if 'message' in content else 'edited_message'
         if key in content:
             message_data = content[key]
             if message_data:
-                print(message_data)
                 self.id = message_data.get('message_id') or message_data['message']['message_id']
                 self.date = message_data.get('date')
                 self.text = message_data.get('text')

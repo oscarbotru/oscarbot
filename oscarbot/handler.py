@@ -70,6 +70,8 @@ class BaseHandler:
             response = self.__get_text_handler(photo=photo, location=location)
             if response:
                 return response
+            if location:
+                return None
         return self.__send_do_not_understand()
 
     def handle(self) -> TGResponse:
