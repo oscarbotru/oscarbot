@@ -6,12 +6,13 @@ from oscarbot.bot_logger import log
 
 class Button:
 
-    def __init__(self, text, callback=None, url=None, web_app=None, ask_location=False):
+    def __init__(self, text, callback=None, url=None, web_app=None, ask_location=False, request_contact=False):
         self.text = text
         self.callback = callback
         self.url = url
         self.web_app = web_app
         self.ask_location = ask_location
+        self.request_contact = request_contact
 
     def build(self):
         menu_button = {
@@ -25,6 +26,8 @@ class Button:
             menu_button['web_app'] = {'url': self.web_app}
         elif self.ask_location:
             menu_button['request_location'] = True
+        elif self.request_contact:
+            menu_button['request_contact'] = True
         return menu_button
 
 
@@ -59,7 +62,7 @@ class Menu:
                     line_menu_items = []
             menu_items.append(line_menu_items)
         if self.mode == 'inline':
-            log.info(f'{menu_items}')
+            log.info(f'\n{menu_items}\n')
             return json.dumps({'inline_keyboard': menu_items})
         elif self.mode == 'keyboard_remove':
             return json.dumps({'remove_keyboard': True})
