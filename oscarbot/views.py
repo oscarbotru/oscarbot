@@ -1,9 +1,11 @@
 import json
+
 from django.conf import settings
-from oscarbot.handler import BaseHandler
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
+from oscarbot.handler import BaseHandler
+from oscarbot.response import TGResponse
 from oscarbot.services import get_bot_model
 
 
