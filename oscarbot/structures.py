@@ -53,3 +53,4 @@ class Message:
                 self.location = message_data.get('location')
                 self.user = User(message_data.get('from'))
                 self.chat = Chat(message_data.get('chat') or message_data['message']['chat'])
+                self.contact = message_data.get('contact')

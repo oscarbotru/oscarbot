@@ -27,7 +27,7 @@ def handle_content(token, content):
         try:
             handler = BaseHandler(bot_token, content)
             tg_response = handler.handle()
-            if tg_response:
+            if tg_response and isinstance(tg_response, TGResponse):
                 if tg_response.can_send():
                     tg_response.send(token, handler.user, handler.group, content)
                 return HttpResponse(content=b"OK")
