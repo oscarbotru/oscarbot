@@ -16,6 +16,7 @@ class TGResponseBase:
             has_spoiler=False,
             protect=False,
             disable_web_page_preview=False,
+            update_message_id=None,
     ):
         self.menu = menu
 
@@ -31,6 +32,7 @@ class TGResponseBase:
 
         self.tg_bot = None
         self.parse_mode = settings.TELEGRAM_PARSE_MODE if getattr(settings, 'TELEGRAM_PARSE_MODE', None) else 'HTML'
+        self.update_message_id = update_message_id
 
 
 class TGResponseMedia:
@@ -129,7 +131,7 @@ class TGResponse(TGResponseMedia, TGResponseBase):
 
         return message_id
 
-    def send(self, token, user=None, group=None, content=None, t_id=None):
+    def send(self, token, user=None, group=None, content=None, t_id=None, is_update_message_id=True):
         self.tg_bot = Bot(token)
         if content and (self.callback_text or self.callback_url):
             self.send_callback(content)
@@ -139,7 +141,10 @@ class TGResponse(TGResponseMedia, TGResponseBase):
 
         data_to_send = self.__collect_data_to_send(user, group, t_id)
 
-        message_id = self.__get_message_id(user, content)
+        if not self.update_message_id:
+            message_id = self.__get_message_id(user, content)
+        else:
+            message_id = self.update_message_id
         data_to_send['message_delete'] = message_id
 
         if self.need_update:
@@ -162,7 +167,7 @@ class TGResponse(TGResponseMedia, TGResponseBase):
                     response_content = self.tg_bot.send_message(**data_to_send)
         else:
             response_content = self.tg_bot.send_message(**data_to_send)
-        if user:
+        if user and is_update_message_id:
             user.update_last_sent_message(response_content)
         return response_content
 
