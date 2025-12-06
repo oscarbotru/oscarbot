@@ -1,4 +1,5 @@
 import json
+import traceback
 
 from django.conf import settings
 from django.http import HttpResponse
@@ -34,7 +35,8 @@ def handle_content(token, content):
                     tg_response.send(token, handler.user, handler.group, content)
                 return HttpResponse(content=b"OK")
         except Exception as ex:
-            print(ex)
+            traceback.print_exc()
+            print(repr(ex))
             return HttpResponse(content=b"OK")
     else:
         raise RuntimeError('Failed to find bot')

@@ -155,10 +155,14 @@ class BaseHandler:
         for file in self.message.photo:
             file_id = file['file_id']
             res = requests.get(f'{settings.TELEGRAM_URL}{self.bot.token}/getFile?file_id={file_id}')
-            file_path = res.json()['result']['file_path']
-            photos.append(
-                f'https://api.telegram.org/file/bot{self.bot.token}/{file_path}'
-            )
+            print(res.text)
+            if res.status_code == 200:
+                file_path = res.json()
+                if 'result' in file_path:
+                    file_path = file_path['result']['file_path']
+                    photos.append(
+                        f'https://api.telegram.org/file/bot{self.bot.token}/{file_path}'
+                    )
         return self.__work_text_processor(photo=photos)
 
     def __handle_document_data(self):

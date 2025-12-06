@@ -14,6 +14,6 @@ def first_question(_):
         Button("Да", callback="/diagnostic/"),
     ])
     return TGResponse(
-        message=get_msg(text_args=['qweqwe', 'qwdqweqw']),
-        menu=menu,
+        message='текст',
+        file='https://s16.os-demo.tech/media/file.docx',
     )
