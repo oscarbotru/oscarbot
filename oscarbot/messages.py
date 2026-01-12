@@ -24,6 +24,14 @@ class ResponseMessage:
         return None
 
     @classmethod
+    def find_messages(cls, app_name: str, path: str) -> dict:
+        app_message_file_path = os.path.join(settings.BASE_DIR, app_name, cls.FILE_NAME)
+        with open(app_message_file_path, 'r', encoding='utf8') as messages_file:
+            messages_data = yaml.safe_load(messages_file)
+            messages = messages_data.get(path, {})
+        return messages
+
+    @classmethod
     def collect(cls):
         """ Collect all routers in messages if not exists """
         for app_item in settings.OSCARBOT_APPS:
@@ -90,3 +98,8 @@ def get_msg(alias=None, text_args: list | None = None) -> str:
         return final_message
 
     return ResponseMessage.find_message('dont_know', 'defaults')
+
+
+def get_messages(app_name: str = 'main', path: str = 'messages') -> dict:
+    """ Find messages by path """
+    return ResponseMessage.find_messages(app_name, path)
